@@ -14,7 +14,8 @@ if credentialsPath and credentialsJSON:
     with open(credentialsPath, "w") as f:
         json.dump(json.loads(credentialsJSON), f)
 
-client = storage.Client.from_service_account_json(credentialsPath)
+# client = storage.Client.from_service_account_json(credentialsPath)
+client = storage.Client.from_service_account_json("../GoogleCS.json")
 bucket = client.get_bucket("hackathongeoguesser")
 
 def getCoordsData():
