@@ -19,7 +19,6 @@ const Play = () => {
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
-        console.log("Backend URL:", `${BACKEND_URL}/api/data`);
         fetch(`${BACKEND_URL}/api/data`)
         // fetch("api/data")
             .then((response) => {
