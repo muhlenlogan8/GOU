@@ -31,8 +31,9 @@ const TestimonialCard = ({ imageSrc, name, title, testimonial, linkedInUrl }) =>
           <img
             width={50}
             height={50}
-            src={isHovered ? linkedInHover : linkedIn}
+            src={linkedInHover} // Default to hover icon
             alt="LinkedIn icon"
+            className="transition-transform duration-300 ease-in-out transform hover:scale-110" // Enlarge on hover
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           />

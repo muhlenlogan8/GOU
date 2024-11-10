@@ -9,7 +9,7 @@ const Header = () => {
   const [isHover, setIsHovered] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-indigo-900 backdrop-blur-lg border-b border-indigo-500 z-10">
+    <header className="fixed top-0 left-0 right-0 bg-blue-300 backdrop-blur-lg border-b border-blue-300 z-10">
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8"
@@ -77,7 +77,7 @@ const Header = () => {
         className="lg:hidden"
       >
         <div className="fixed inset-0 z-10">
-          <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-indigo-800 px-6 py-3 sm:max-w-sm border-l border-indigo-500">
+          <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-blue-300 px-6 py-3 sm:max-w-sm border-l border-[#87CEEB]">
             <div className="flex justify-between items-center">
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Relax Finance</span>
