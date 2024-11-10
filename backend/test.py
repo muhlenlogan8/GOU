@@ -98,7 +98,7 @@ def generate_map(coordinates_list):
 @app.route('/')
 def index():
     # Folder containing images
-    folder_path = r"C:\Users\cumpl\Dropbox\Personal\MakeUC 2024"
+    folder_path = r"C:\Users\cumpl\Documents\MUC24"
     
     # Get coordinates from the images in the folder
     coordinates_list = read_folder_exif(folder_path)
