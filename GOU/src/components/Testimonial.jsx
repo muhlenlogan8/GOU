@@ -1,8 +1,8 @@
-import TestimonialCard from "./subComponents/TestimonialCard";
-import LoganImage from "../assets/Logan.JPG";
-import CameranImage from "../assets/Cameran.JPG";
+import TestimonialCard from "./subcomponents/TestimonialCard";
+import LoganImage from "../assets/Logan.jpg";
+import CameranImage from "../assets/Cameran.jpg";
 
-import AndyImage from "../assets/Andy.JPG";
+import AndyImage from "../assets/Andy.jpg";
 
 const Testimonial = () => {
   const testimonials = [
