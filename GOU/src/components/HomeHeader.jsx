@@ -15,14 +15,14 @@ const Header = () => {
       >
         {/* Logo aligned to the left and pushed to the left end */}
         <div className="flex flex-1 items-center justify-start">
-          <a href="" className="-m-1.5 p-1.5">
+          <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Uni-Guesser</span>
             <img
               width={40}
               height={40}
               src={logo}
               alt=""
-              href=""
+              href="#"
             />
           </a>
         </div>
@@ -65,7 +65,7 @@ const Header = () => {
             href="/play"
             className="text-lg font-semibold leading-6 text-gray-100 hover:text-indigo-400 hover:underline"
           >
-            Start Now
+            Play Now
           </a>
         </div>
       </nav>
@@ -117,7 +117,7 @@ const Header = () => {
                     href="/play"
                     className="-mx-3 block rounded-lg px-3 py-4 text-3xl font-semibold leading-7 text-gray-100 hover:text-indigo-400 hover:underline"
                   >
-                    Start Now
+                    Play Now
                   </a>
                 </div>
               </div>
