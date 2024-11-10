@@ -22,6 +22,7 @@ def getImage():
     client = storage.Client.from_service_account_json("GoogleCS.json")
     bucket = client.get_bucket("hackathongeoguesser")
     
+<<<<<<< HEAD
     imagePath = "images/IMG_20210710_131234.jpg"
     blob = bucket.blob('coordinates.json')
     # Downloads image to file image.jpg then can use image.jpg for stuff
@@ -105,3 +106,9 @@ def delete_game_folder_contents():
 #move_file_to_images()
 #delete_game_folder_contents()
 #select_random_files_and_move('hackathongeoguesser', 'images/', 'GameImages/')
+=======
+    folderPath = "images"
+    blob = bucket.blob(folderPath)
+    # Downloads image to file image.jpg then can use image.jpg for stuff
+    blob.download_to_filename("images")
+>>>>>>> 98a0ef9421158376a97c5f56909b2083859daf79
