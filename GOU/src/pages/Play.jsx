@@ -48,7 +48,6 @@ const Play = () => {
     }
 
     const handleCoordinatesSubmit = (data) => {
-        console.log("Submitted data:", data); // Check the data here
         if (imagesData.length === 0 || round > imagesData.length) {
             console.error("Invalid round or imagesData not loaded");
             return;
@@ -98,7 +97,7 @@ const Play = () => {
     };
 
     return (
-        <div className="flex flex-col h-full relative">
+        <div className="bg-blue-100 flex flex-col h-full relative">
             <div className="flex-grow flex overflow-hidden">
                 <div className="w-2/5 p-4 relative">
                     <ImageContainer
@@ -130,7 +129,7 @@ const Play = () => {
                                         onClick={handleClosePopup}
                                         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                                     >
-                                        Next Round
+                                        {round === 5 ? "End Game" : "Next Round"}
                                     </button>
                                 </div>
                             </div>

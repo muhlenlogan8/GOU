@@ -12,16 +12,23 @@ client = storage.Client.from_service_account_json("../GoogleCS.json")
 bucket = client.get_bucket("hackathongeoguesser")
 jsonFilePath = "coordinates.json"
 
-def getJsonData():
+def getCoordsData():
     blob = bucket.blob(jsonFilePath)
     blob.download_to_filename("coordinates.json")
     with open("coordinates.json") as f:
         data = json.load(f)
     return data
 
+def getLeaderboardData():
+    blob = bucket.blob("leaderboard.json")
+    blob.download_to_filename("leaderboard.json")
+    with open("leaderboard.json") as f:
+        data = json.load(f)
+    return data
+
 @app.route("/api/data", methods=["GET"])
 def getData():
-    data = getJsonData()
+    data = getCoordsData()
     selectedData = random.sample(data, 5)
     return jsonify(selectedData)
 

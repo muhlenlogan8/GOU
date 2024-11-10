@@ -63,9 +63,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 		useMapEvents({
 			click(e) {
 				setCoordinates(e.latlng);
-				console.log("Clicked coordinates:", e.latlng);
 				if (currentPoint) {
-					console.log("Current point:", currentPoint);
 					const distanceMeters = L.latLng(e.latlng).distanceTo(currentPoint);
 					setDistance(distanceMeters.toFixed(2));
 				} else {
@@ -79,6 +77,11 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 
 	const handleSubmit = () => {
 		if (coordinates && onCoordinatesSubmit && currentPoint) {
+            const polylineBounds = L.latLngBounds([top_left, top_right, bottom_right, bottom_left]);
+            if (!polylineBounds.contains(coordinates)) {
+                alert("Selected point is outside the allowed area.");
+                return;
+            }
 			const distanceMeters = L.latLng(coordinates).distanceTo(currentPoint);
 			const score = Math.max(0, 100 - distanceMeters / 10);
 			onCoordinatesSubmit({
@@ -86,8 +89,6 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 				distance: distanceMeters.toFixed(2),
 			});
 			setShowActualPoint(true); // Ensure this updates the state
-			console.log("Submitted coordinates:", coordinates);
-			console.log("Current point:", currentPoint);
 		} else {
 			console.error("coordinates or currentPoint is undefined");
 		}
@@ -127,7 +128,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	];
 
 	return (
-		<div className="w-full h-full p-3 bg-gray-200 flex flex-col">
+		<div className="w-full h-full p-3 flex flex-col">
 			<MapContainer
 				center={[39.13211, -84.5158]}
 				zoom={16}

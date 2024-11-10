@@ -41,7 +41,7 @@ const ImageContainer = forwardRef(
 		}));
 
 		return (
-			<div className="flex items-center justify-center w-full h-screen-adjusted-image-container overflow-hidden bg-gray-200">
+			<div className="flex items-center justify-center w-full h-screen-adjusted-image-container overflow-hidden">
 				<div className="flex flex-col items-center p-2 w-screen">
 					<h1 className="text-4xl font-bold mb-6 text-center w-full">
 						Campus Geoguesser
