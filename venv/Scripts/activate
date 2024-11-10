@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\muhle\CodeProjects_git\GOU\venv"
+VIRTUAL_ENV="C:\Users\cumpl\Documents\MakeUC 2024\GOU\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
