@@ -90,7 +90,7 @@ def generate_map(coordinates_list):
         if coords:
             folium.Marker(
                 location=[coords[0], coords[1]],
-                popup=filename
+                #popup=filename
             ).add_to(map_obj)
 
     return map_obj
