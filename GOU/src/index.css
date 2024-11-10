@@ -2,3 +2,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.h-screen-adjusted-image-container {
+    height: calc(95vh - 35px);
+}
+
+.h-screen-adjusted-map {
+    height: calc(90vh - 65px);
+}

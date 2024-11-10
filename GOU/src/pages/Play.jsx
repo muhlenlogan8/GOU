@@ -1,9 +1,7 @@
-import Header from "../components/Header";
-import Image from "../components/Image";
+import React from "react";
+import ImageContainer from "../components/ImageContainer";
 import Map from "../components/Map";
 import Footer from "../components/Footer";
-import image from "../assets/228469.jpg";
-import mapImage from "../assets/228469.jpg";
 
 const Play = () => {
 	const handleCoordinatesSubmit = (coords) => {
@@ -11,12 +9,17 @@ const Play = () => {
 	};
 
 	return (
-		<>
-			<Header />
-			<Image src={image} alt="Description of the image" />
-			<Map mapSrc={mapImage} onCoordinatesSubmit={handleCoordinatesSubmit} />
-            <Footer />
-		</>
+		<div className="flex flex-col h-full">
+			<div className="flex-grow flex overflow-hidden">
+				<div className="w-2/5 p-4">
+					<ImageContainer />
+				</div>
+				<div className="w-3/5 p-4">
+					<Map onCoordinatesSubmit={handleCoordinatesSubmit} />
+				</div>
+			</div>
+			<Footer />
+		</div>
 	);
 };
 

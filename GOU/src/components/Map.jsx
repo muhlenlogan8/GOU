@@ -1,13 +1,27 @@
 import React, { useState } from "react";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-const Map = ({ mapSrc, onCoordinatesSubmit }) => {
-    const [coordinates, setCoordinates] = useState(null);
+// Marker icon setup for Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+	iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+	iconRetinaUrl:
+		"https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+	shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+});
 
-	const handleMapClick = (event) => {
-		const rect = event.target.getBoundingClientRect();
-		const x = event.clientX - rect.left;
-		const y = event.clientY - rect.top;
-		setCoordinates({ x, y });
+const Map = ({ onCoordinatesSubmit }) => {
+	const [coordinates, setCoordinates] = useState(null);
+
+	const LocationMarker = () => {
+		useMapEvents({
+			click(e) {
+				setCoordinates(e.latlng);
+			},
+		});
+		return coordinates ? <Marker position={coordinates} /> : null;
 	};
 
 	const handleSubmit = () => {
@@ -15,10 +29,27 @@ const Map = ({ mapSrc, onCoordinatesSubmit }) => {
 			onCoordinatesSubmit(coordinates);
 		}
 	};
+
 	return (
-		<div className="fixed bottom-20 right-2 w-52 hover:w-96 border border-gray-300 rounded-lg p-3 bg-gray-100 shadow-md">
-			<div className="overflow-hidden cursor-pointer" onClick={handleMapClick}>
-				<img src={mapSrc} alt="Map" className="w-full h-auto" />
+		<div className="w-full h-full p-3 bg-gray-200 flex flex-col">
+			<div className="flex-grow">
+				<MapContainer
+					center={[39.13211, -84.5158]}
+					maxBounds={[
+						[39.125, -84.525],
+						[39.14, -84.507],
+					]}
+					zoom={16}
+					minZoom={16}
+					className="w-full h-full"
+					scrollWheelZoom={true}
+				>
+					<TileLayer
+						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+					/>
+					<LocationMarker />
+				</MapContainer>
 			</div>
 			<button
 				onClick={handleSubmit}
@@ -26,11 +57,6 @@ const Map = ({ mapSrc, onCoordinatesSubmit }) => {
 			>
 				Submit Coordinates
 			</button>
-			{coordinates && (
-				<p className="mt-2 text-sm text-gray-700">
-					Coordinates: ({coordinates.x.toFixed(1)}, {coordinates.y.toFixed(1)})
-				</p>
-			)}
 		</div>
 	);
 };

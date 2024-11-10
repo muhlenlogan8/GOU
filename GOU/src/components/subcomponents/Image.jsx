@@ -35,25 +35,27 @@ const Image = ({ src, alt }) => {
 
 	return (
 		<div
-			className="relative w-full h-[650px] overflow-hidden border border-gray-300 rounded-lg"
+			className="relative bg-gray-200 w-full h-full overflow-hidden border border-gray-300 rounded-lg image-container"
 			onWheel={handleWheel}
 			onMouseDown={handleMouseDown}
 			onMouseMove={handleMouseMove}
 			onMouseUp={handleMouseUp}
 			onMouseLeave={handleMouseUp}
 		>
-			<img
-				src={src}
-				alt={alt}
-				className="cursor-grab rounded-lg select-none"
-				draggable="false"
-				style={{
-					transform: `scale(${scale}) translate(${position.x / scale}px, ${
-						position.y / scale
-					}px)`,
-					transformOrigin: "center center",
-				}}
-			/>
+			<div className="relative w-full h-full overflow-hidden border border-gray-300 rounded-lg">
+				<img
+					src={src}
+					alt={alt}
+					className="cursor-grab select-none rounded-lg"
+					draggable="false"
+					style={{
+						transform: `scale(${scale}) translate(${position.x / scale}px, ${
+							position.y / scale
+						}px)`,
+						transformOrigin: "center center",
+					}}
+				/>
+			</div>
 		</div>
 	);
 };
