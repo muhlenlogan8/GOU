@@ -9,7 +9,7 @@ const Header = () => {
   const [isHover, setIsHovered] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-blue-300 backdrop-blur-lg border-b border-blue-300 z-10">
+    <header className="fixed z-20 top-0 left-0 right-0 bg-blue-300 backdrop-blur-2xl border-b border-gray-300 bg-transparent">
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8"

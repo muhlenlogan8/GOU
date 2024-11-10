@@ -59,12 +59,20 @@ const GameOver = () => {
 				<h1 className="text-4xl font-bold mb-4">Game Over!</h1>
 				<p className="text-lg">Thank you for playing!</p>
 				<p className="text-xl">Final Score: {roundedScore} / 500</p>
-				<button
+				<div className="flex flex-row items-center">
+                <button
+					onClick={() => navigate("/")} // Navigate to / on button press
+					className="mr-2 w-32 mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+				>
+					Home
+				</button>
+                <button
 					onClick={() => navigate("/play")} // Navigate to /play on button press
-					className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+					className="ml-2 w-32 mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
 				>
 					Play Again
 				</button>
+                </div>
 				{/* {isTop10 && (
 					<div className="mt-8 flex flex-col items-center">
 						<h3 className="text-xl text-center font-bold">
