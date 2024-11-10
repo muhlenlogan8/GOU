@@ -16,9 +16,10 @@ const Play = () => {
     const navigate = useNavigate();
 
     const totalRounds = 5;
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
-        fetch("/api/data")
+        fetch(`${BACKEND_URL}/api/data`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");

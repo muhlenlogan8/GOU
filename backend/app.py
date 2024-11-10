@@ -6,7 +6,7 @@ import json
 import os
 
 app = Flask(__name__)
-CORS(app)  # Allow cross-origin requests
+cors = CORS(app, origins = "uni-guesser-two-vercel.app")  # Allow cross-origin requests
 
 credentialsPath = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 credentialsJSON = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
