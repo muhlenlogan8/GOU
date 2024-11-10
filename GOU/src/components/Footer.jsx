@@ -13,7 +13,7 @@ const Footer = () => {
             Developed For MakeUC 2024
           </p>
           <a
-            href="https://future-of-data.devpost.com/?ref_feature=challenge&ref_medium=your-open-hackathons&ref_content=Submissions+open"
+            href="https://devpost.com/software/uni-guesser"
             target="_blank"
             rel="noopener noreferrer"
             className="-m-1 p-1"
