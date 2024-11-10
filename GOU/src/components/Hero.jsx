@@ -1,24 +1,29 @@
 import React from "react";
+import { motion } from "framer-motion"; // For animations
 
 const Hero = () => {
 	return (
-		<div className="border-b border-n-14 relative overflow-hidden sm:h-180">
-			<div className="relative isolate px-6 pt-14 lg:px-8">
-				<div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-58">
-					<div className="text-center">
-						<h1 className="text-4xl font-bold">GOU</h1>
-						<p className="mt-4 text-lg">
-							Geoguesser for campus, buildings, companies, other locations
-						</p>
-						<div className="mt-10 flex items-center justify-center gap-x-6">
-							<a
-								href="/play"
-								className="rounded-lg bg-slate-600 px-3.5 py-2.5 text-sm font-semibold text-n-14 shadow-sm hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-							>
-								Start Now
-							</a>
-						</div>
-					</div>
+		<div className="bg-blue-300 h-screen flex items-center justify-center">
+			<div className="text-center px-6 py-16 sm:py-32 lg:py-48">
+				<motion.h1 
+					className="text-5xl font-bold text-gray-800 tracking-wide" 
+					initial={{ opacity: 0 }} 
+					animate={{ opacity: 1 }} 
+					transition={{ duration: 1 }}
+				>
+					GOU
+				</motion.h1>
+				<p className="mt-4 text-xl sm:text-2xl text-gray-600">
+					Geoguesser for campus, buildings, companies, and other locations
+				</p>
+				<div className="mt-10 flex justify-center">
+					<motion.a
+						href="/play"
+						className="rounded-lg bg-slate-600 px-6 py-3 text-lg font-semibold text-white shadow-md hover:bg-blue-500 transition duration-300 transform hover:scale-105"
+						whileHover={{ scale: 1.05 }}
+					>
+						Start Now
+					</motion.a>
 				</div>
 			</div>
 		</div>

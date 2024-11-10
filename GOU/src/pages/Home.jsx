@@ -1,11 +1,15 @@
+import HomeHeader from "../components/HomeHeader";
 import Hero from "../components/Hero";
+import Testimonial from "../components/Testimonial";
 
-const Home = () => {
-	return (
-		<>
-			<Hero />
-		</>
-	);
+const LandingPage = () => {
+  return (
+    <>
+	  <HomeHeader />
+      <Hero />
+      <Testimonial />
+    </>
+  );
 };
 
-export default Home;
+export default LandingPage;
