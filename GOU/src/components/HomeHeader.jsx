@@ -1,6 +1,5 @@
 import { useState } from "react";
-import logo from "../assets/logo.svg";
-import logoHover from "../assets/logoHover.svg";
+import logo from "../assets/UniGuesser_Logo.png";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog, DialogPanel, PopoverGroup } from "@headlessui/react";
 
@@ -15,16 +14,14 @@ const Header = () => {
         className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8"
       >
         <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Relax Finance</span>
+          <a href="" className="-m-1.5 p-1.5">
+            <span className="sr-only">Uni-Guesser</span>
             <img
               width={50}
               height={40}
-              src={isHover ? logoHover : logo}
+              src= {logo}
               alt=""
-              href="#"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              href=""
             />
           </a>
         </div>
