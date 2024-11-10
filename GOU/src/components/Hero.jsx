@@ -36,7 +36,7 @@ const Hero = () => {
             className="rounded-lg bg-slate-600 px-6 py-3 text-lg font-semibold text-white shadow-md hover:bg-blue-500 transition duration-300 transform hover:scale-105"
             whileHover={{ scale: 1.05 }}
           >
-            Start Now
+            Play Now
           </motion.a>
         </div>
       </div>

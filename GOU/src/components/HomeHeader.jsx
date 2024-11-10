@@ -65,7 +65,7 @@ const Header = () => {
             href="/play"
             className="text-lg font-semibold leading-6 text-gray-100 hover:text-indigo-400 hover:underline"
           >
-            Start Now
+            Play Now
           </a>
         </div>
       </nav>
@@ -117,7 +117,7 @@ const Header = () => {
                     href="/play"
                     className="-mx-3 block rounded-lg px-3 py-4 text-3xl font-semibold leading-7 text-gray-100 hover:text-indigo-400 hover:underline"
                   >
-                    Start Now
+                    Play Now
                   </a>
                 </div>
               </div>
