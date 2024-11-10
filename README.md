@@ -7,7 +7,7 @@ We were inspired by the game Geoguessr and thought having a location specific Ge
 Uni-Guesser is a Geoguessr like game that is focus around the University of Cincinnati campus. Each game consists of 5 rounds where the player has to guess where an image was taken on the campus of UC. The closer the guess is to the correct spot, the more points will be awarded to the player. The ultimate goal of Uni-Guesser is to achieve a perfect score of 500 points.
 
 ## How we built it
-We built Uni-Guesser using a React and Tailwindcss for the frontend and Flask/Python for the backend. We store our image using Google Cloud Storage.
+We built Uni-Guesser using a React and Tailwind CSS for the frontend and Flask/Python for the backend. We store our image using Google Cloud Storage.
 
 ## Challenges we ran into
 Making a dynamic and interactive application was a challenge. Most of our time was spent figuring out how the frontend should react and ensuring the game would run smoothly, be engaging, and fun overall.
