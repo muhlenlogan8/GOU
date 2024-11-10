@@ -10,7 +10,7 @@ const Hero = () => {
         className="absolute inset-0"
         style={{
           backgroundImage: `url(${backgroundImage})`,
-          filter: "blur(8px)", // Apply blur only to the background image
+          filter: "blur(5px)", // Apply blur only to the background image
           zIndex: -1, // Ensure it's behind other content
           backgroundSize: "cover", // Ensure image covers entire area
           backgroundPosition: "center", // Ensure image is centered
@@ -25,10 +25,10 @@ const Hero = () => {
           animate={{ opacity: 1 }} 
           transition={{ duration: 1 }}
         >
-          GOU
+          Welcome to Uni-Guesser!
         </motion.h1>
         <p className="mt-4 text-xl sm:text-2xl text-gray-200">
-          Geoguesser for campus, buildings, companies, and other locations
+		Test your knowledge of the University of Cincinnati’s campus!<br /> Can you guess the location from a few clues?<br /> Challenge your friends and see who knows the campus best!
         </p>
         <div className="mt-10 flex justify-center">
           <motion.a

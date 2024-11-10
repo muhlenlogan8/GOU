@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="flex flex-col items-center text-center">
         <div className="mt-2 flex">
           <p className="mr-2">
-            Developed For The Future Of Data Hackathon
+            Developed For MakeUC 2024
           </p>
           <a
             href="https://future-of-data.devpost.com/?ref_feature=challenge&ref_medium=your-open-hackathons&ref_content=Submissions+open"
