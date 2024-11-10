@@ -15,14 +15,14 @@ const Header = () => {
       >
         {/* Logo aligned to the left and pushed to the left end */}
         <div className="flex flex-1 items-center justify-start">
-          <a href="" className="-m-1.5 p-1.5">
+          <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Uni-Guesser</span>
             <img
               width={40}
               height={40}
               src={logo}
               alt=""
-              href=""
+              href="#"
             />
           </a>
         </div>
