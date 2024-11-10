@@ -4,29 +4,40 @@ import React, {
 	forwardRef,
 	useImperativeHandle,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import Image from "./subcomponents/Image";
 import ScoreAndRound from "./subcomponents/ScoreAndRound";
 import image from "../assets/228469.jpg";
 
 const ImageContainer = forwardRef(({ round }, ref) => {
 	const [score, setScore] = useState(0);
-    const totalRounds = 5;
+	const totalRounds = 5;
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		// Can adjust the score based on the round
 	}, [round]);
 
+	const handleScoreUpdate = (newScore) => {
+		setScore((prevScore) => {
+			const updatedScore = prevScore + newScore;
+			return updatedScore;
+		});
+	};
+
 	useImperativeHandle(ref, () => ({
+		handleScoreUpdate,
 		nextRound() {
-			// Logic for next round, e.g., reset score, image, etc.
-			console.log("Next Round triggered in ImageContainer");
+			if (round < totalRounds) {
+				setRound(round + 1);
+			} else {
+                navigate("/game-over", { state: { score } });
+            }
+		},
+		getScore() {
+			return score;
 		},
 	}));
-
-    const handleScoreUpdate = (newScore) => {
-        setScore((prevScore => prevScore + newScore));
-        if (onScoreUpdate) onScoreUpdate(score + newScore);
-    };
 
 	return (
 		<div className="flex items-center justify-center w-full h-screen-adjusted-image-container overflow-hidden bg-gray-200">

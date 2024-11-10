@@ -16,11 +16,19 @@ const Play = () => {
 	const actualPoint = { lat: 39.13211, lng: -84.5158 };
 
 	const handleCoordinatesSubmit = (data) => {
-		setSubmittedData(data);
-		setShowPopup(true);
 		const distanceMeters = L.latLng(data.coordinates).distanceTo(actualPoint);
-		const score = Math.max(0, 100 - distanceMeters / 10);
-		imageContainerRef.current.handleScoreUpdate(score); // Update score in ImageContainer
+		let score = 0;
+		if (distanceMeters < 8) {
+			score = 100;
+		} else if (distanceMeters <= 100) {
+			score = Math.max(0, 100 - distanceMeters);
+		}
+		score = parseFloat(score.toFixed(2)); // Round the score to 2 decimal points
+		setSubmittedData({ ...data, distance: distanceMeters, score });
+		setShowPopup(true);
+		if (imageContainerRef.current) {
+			imageContainerRef.current.handleScoreUpdate(score); // Update score in ImageContainer
+		}
 	};
 
 	const handleClosePopup = () => {
@@ -29,7 +37,8 @@ const Play = () => {
 		if (round < totalRounds) {
 			setRound(round + 1);
 		} else {
-			navigate("/game-over");
+			const finalScore = imageContainerRef.current.getScore();
+			navigate("/game-over", { state: { score: finalScore } });
 		}
 
 		if (mapRef.current) {
@@ -40,11 +49,20 @@ const Play = () => {
 		}
 	};
 
+	const handleScoreUpdate = (newScore) => {
+		console.log("Updated Score:", newScore);
+		// Do something with the updated score (e.g., update the state or trigger other actions)
+	};
+
 	return (
 		<div className="flex flex-col h-full relative">
 			<div className="flex-grow flex overflow-hidden">
 				<div className="w-2/5 p-4 relative">
-					<ImageContainer ref={imageContainerRef} round={round} />
+					<ImageContainer
+						ref={imageContainerRef}
+						round={round}
+						onScoreUpdate={handleScoreUpdate}
+					/>
 					{showPopup && (
 						<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 							<div className="bg-white p-8 rounded shadow-lg w-3/4">
@@ -59,7 +77,10 @@ const Play = () => {
 								</p>
 								<p className="text-center">
 									Distance from actual location:{" "}
-									{submittedData?.distance || "N/A"} meters
+									{submittedData?.distance?.toFixed(2) || "N/A"} meters
+								</p>
+								<p className="text-center">
+									Points: {submittedData?.score || 0}
 								</p>
 								<div className="flex justify-center">
 									<button
