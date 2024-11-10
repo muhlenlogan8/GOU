@@ -23,7 +23,7 @@ def getImage():
     client = storage.Client.from_service_account_json("GoogleCS.json")
     bucket = client.get_bucket("hackathongeoguesser")
     
-    imagePath = "images/IMG_20210710_131234.jpg"
-    blob = bucket.blob(imagePath)
+    folderPath = "images"
+    blob = bucket.blob(folderPath)
     # Downloads image to file image.jpg then can use image.jpg for stuff
-    blob.download_to_filename("image.jpg")
+    blob.download_to_filename("images")
