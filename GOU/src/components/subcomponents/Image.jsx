@@ -1,63 +1,69 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-const Image = ({ src, alt }) => {
-	const [scale, setScale] = useState(1);
-	const [position, setPosition] = useState({ x: 0, y: 0 });
-	const [isDragging, setIsDragging] = useState(false);
-	const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+const Image = ({ src, alt, magnifierHeight = 200, magnifierWidth = 200, zoomLevel = 1.5 }) => {
+    const [showMagnifier, setShowMagnifier] = useState(false);
+    const [[imgWidth, imgHeight], setSize] = useState([0, 0]);
+    const [[x, y], setXY] = useState([0, 0]);
+    const containerRef = useRef(null);
 
-	const handleWheel = (event) => {
-		event.preventDefault();
-		setScale((prevScale) =>
-			Math.min(Math.max(prevScale + event.deltaY * -0.001, 0.5), 3)
-		);
-	};
+    const mouseEnter = (e) => {
+        const el = e.currentTarget;
+        const { width, height } = el.getBoundingClientRect();
+        setSize([width, height]);
+        setShowMagnifier(true);
+    };
 
-	const handleMouseDown = (event) => {
-		setIsDragging(true);
-		setStartPosition({
-			x: event.clientX - position.x,
-			y: event.clientY - position.y,
-		});
-	};
+    const mouseLeave = (e) => {
+        e.preventDefault();
+        setShowMagnifier(false);
+    };
 
-	const handleMouseMove = (event) => {
-		if (!isDragging) return;
-		setPosition({
-			x: event.clientX - startPosition.x,
-			y: event.clientY - startPosition.y,
-		});
-	};
+    const mouseMove = (e) => {
+        const el = e.currentTarget;
+        const { top, left } = el.getBoundingClientRect();
+        const x = e.pageX - left - window.scrollX;
+        const y = e.pageY - top - window.scrollY;
+        setXY([x, y]);
+    };
 
-	const handleMouseUp = () => {
-		setIsDragging(false);
-	};
-
-	return (
-		<div
-			className="relative bg-gray-200 w-full h-full overflow-hidden border border-gray-300 rounded-lg image-container"
-			onWheel={handleWheel}
-			onMouseDown={handleMouseDown}
-			onMouseMove={handleMouseMove}
-			onMouseUp={handleMouseUp}
-			onMouseLeave={handleMouseUp}
-		>
-			<div className="relative w-full h-full overflow-hidden border border-gray-300 rounded-lg">
-				<img
-					src={src}
-					alt={alt}
-					className="cursor-grab select-none rounded-lg"
-					draggable="false"
-					style={{
-						transform: `scale(${scale}) translate(${position.x / scale}px, ${
-							position.y / scale
-						}px)`,
-						transformOrigin: "center center",
-					}}
-				/>
-			</div>
-		</div>
-	);
+    return (
+        <div
+            ref={containerRef}
+            className="relative bg-gray-200 w-full h-full overflow-hidden border border-gray-300 rounded-lg image-container"
+            onMouseEnter={mouseEnter}
+            onMouseLeave={mouseLeave}
+            onMouseMove={mouseMove}
+        >
+            <div className="relative w-full h-full overflow-hidden border border-gray-300 rounded-lg">
+                <img
+                    src={src}
+                    alt={alt}
+                    className="cursor-default select-none rounded-lg"
+                    draggable="false"
+                />
+                <div
+                    style={{
+                        display: showMagnifier ? '' : 'none',
+                        position: 'absolute',
+                        pointerEvents: 'none',
+                        height: `${magnifierHeight}px`,
+                        width: `${magnifierWidth}px`,
+                        opacity: '1',
+                        border: '1px solid lightgrey',
+                        backgroundColor: 'white',
+                        borderRadius: '5px',
+                        backgroundImage: `url('${src}')`,
+                        backgroundRepeat: 'no-repeat',
+                        top: `${y - magnifierHeight / 2}px`,
+                        left: `${x - magnifierWidth / 2}px`,
+                        backgroundSize: `${imgWidth * zoomLevel}px ${imgHeight * zoomLevel}px`,
+                        backgroundPositionX: `${-x * zoomLevel + magnifierWidth / 2}px`,
+                        backgroundPositionY: `${-y * zoomLevel + magnifierHeight / 2}px`,
+                    }}
+                />
+            </div>
+        </div>
+    );
 };
 
 export default Image;
