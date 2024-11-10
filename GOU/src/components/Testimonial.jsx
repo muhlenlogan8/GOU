@@ -27,7 +27,7 @@ const Testimonial = () => {
         name: "Andy Au",
         title: "Cybersecurity Student",
         testimonial:
-          "Andy",
+          "I'm a fourth year cybersecurity (IT) major, and this is my third Hackathon. I like Jiu-jitsu, video games, hanging out with my friends, and I have goals to join the military in the future.",
         linkedInUrl: "https://www.linkedin.com/in/andyau107/",
       },
   ];
