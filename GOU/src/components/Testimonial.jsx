@@ -1,4 +1,4 @@
-import TestimonialCard from "./subComponents/TestimonialCard";
+import TestimonialCard from "./subcomponents/TestimonialCard";
 import LoganImage from "../assets/Logan.JPG";
 import CameranImage from "../assets/Cameran.JPG";
 
