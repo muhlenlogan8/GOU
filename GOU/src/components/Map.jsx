@@ -1,5 +1,6 @@
 import React, {
 	useState,
+    useEffect,
 	useRef,
 	forwardRef,
 	useImperativeHandle,
@@ -29,6 +30,13 @@ const Map = forwardRef(({ onCoordinatesSubmit, actualPoint, round }, ref) => {
 	const [showActualPoint, setShowActualPoint] = useState(false);
 	const mapRef = useRef();
 
+	useEffect(() => {
+		if (showActualPoint && mapRef.current) {
+			const map = mapRef.current;
+			map.setView(coordinates, 16); // Zoom in to the submitted coordinates
+		}
+	}, [showActualPoint, coordinates]); // Run whenever `showActualPoint` or `coordinates` changes
+
 	useImperativeHandle(ref, () => ({
 		resetMap() {
 			setCoordinates(null);
@@ -50,6 +58,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, actualPoint, round }, ref) => {
 				setDistance(distanceMeters.toFixed(2));
 			},
 		});
+
 		return coordinates ? <Marker position={coordinates} /> : null;
 	};
 
@@ -61,7 +70,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, actualPoint, round }, ref) => {
 				coordinates: coordinates,
 				distance: distanceMeters.toFixed(2),
 			});
-			setShowActualPoint(true);
+			setShowActualPoint(true); // Ensure this updates the state
 		}
 	};
 
@@ -79,7 +88,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, actualPoint, round }, ref) => {
 					attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
 				/>
 				<LocationMarker />
-				{showActualPoint && (
+				{showActualPoint && coordinates && (
 					<>
 						<Marker
 							position={actualPoint}
