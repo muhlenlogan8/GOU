@@ -100,22 +100,22 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	const bottom_right = [39.128115, -84.511767];
 
 	const left_shade_coordinates = [
-		[39.14, -84.53], // Extended point above and to the left
+		[39.13598, -84.53], // Extended point above and to the left
 		top_left,
 		bottom_left,
-		[39.1275, -84.53], // Extended point below and to the left
+		[39.1275, -94.53], // Extended point below and to the left
 	];
 
 	const right_shade_coordinates = [
-		[39.14, -84.51], // Extended point above and to the right
+		[49.14, -84.51112], // Extended point above and to the right
 		top_right,
 		bottom_right,
 		[39.1275, -70.51], // Extended point below and to the right
 	];
 
 	const top_shade_coordinates = [
-		[39.14, -84.53], // Extended point to the top left of the area
-		[39.14, -84.51], // Extended point to the top right of the area
+		[39.1399883, -85.53], // Extended point to the top left of the area
+		[49.14, -84.51], // Extended point to the top right of the area
 		top_right,
 		top_left,
 	];
@@ -124,7 +124,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 		bottom_left,
 		bottom_right,
 		[39.1275, -74.51], // Extended point below and to the right
-		[29.1275, -159.53], // Extended point below and to the left
+		[39.1083, -120.53], // Extended point below and to the left
 	];
 
 	return (
