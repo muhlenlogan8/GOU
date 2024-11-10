@@ -33,7 +33,7 @@ const Testimonial = () => {
   ];
 
   return (
-    <div id="who-we-are" className="overflow-hidden bg-n-15">
+    <div id="meet-the-team" className="overflow-hidden bg-n-15">
       <div className="relative max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
         <div className="max-w-2xl w-3/4 lg:w-1/2 mb-6 sm:mb-10 md:mb-16">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl text-black font-semibold">

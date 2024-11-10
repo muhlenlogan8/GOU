@@ -10,3 +10,8 @@
 .h-screen-adjusted-map {
     height: calc(90vh - 65px);
 }
+
+* {
+    scroll-behavior: smooth;
+    /* Smooth scrolling when navigating within the page (anchor links) */
+}
