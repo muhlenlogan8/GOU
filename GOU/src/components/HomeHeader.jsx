@@ -17,7 +17,7 @@ const Header = () => {
           <a href="" className="-m-1.5 p-1.5">
             <span className="sr-only">Uni-Guesser</span>
             <img
-              width={50}
+              width={40}
               height={40}
               src= {logo}
               alt=""
