@@ -26,9 +26,11 @@ def getLeaderboardData():
     return data
 
 def saveLeaderboardData(data):
+    print(data)
     with open("leaderboard.json", "w") as f:
         json.dump(data, f)
     blob = bucket.blob("leaderboard.json")
+    print(blob)
     blob.upload_from_filename("leaderboard.json")
 
 @app.route("/api/data", methods=["GET"])
@@ -44,19 +46,28 @@ def getLeaderboard():
 
 @app.route("/api/leaderboard", methods=["POST"])
 def updateLeaderboard():
+    pass
     newEntry = request.json
     print(newEntry)
     leaderboard = getLeaderboardData()
-    
+
     # Add the new entry to the leaderboard
     leaderboard.append(newEntry)
     leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
     
-    # Keep only the top 10 entries
-    leaderboard = leaderboard[:10]
+    # Limit leaderboard to the top 10 entries
+    if len(leaderboard) > 10:
+        leaderboard = leaderboard[:10]
     
-    # Save the updated leaderboard
-    saveLeaderboardData(leaderboard)
+    # Save the updated leaderboard in memory, not through a file
+    try:
+        blob = bucket.blob("leaderboard.json")
+        blob.upload_from_string(json.dumps(leaderboard), content_type='application/json')
+        print("Leaderboard updated and saved successfully.")
+    except Exception as e:
+        print("Error saving leaderboard to Google Cloud Storage:", e)
+        return jsonify({"error": "Failed to save leaderboard"}), 500
+
     return jsonify(leaderboard)
 
 if __name__ == "__main__":

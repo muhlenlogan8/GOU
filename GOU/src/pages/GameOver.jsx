@@ -12,46 +12,46 @@ const GameOver = () => {
 	const [isTop10, setIsTop10] = useState(false);
 	const [name, setName] = useState("");
 
-	useEffect(() => {
-		// Fetch the leaderboard data
-		fetch("/api/leaderboard")
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-				return response.json();
-			})
-			.then((data) => {
-				setLeaderboard(data);
-				// Check if the score is in the top 10
-				const isTop10 = data.length < 10 || score > data[data.length - 1].score;
-				setIsTop10(isTop10);
-			})
-			.catch((error) => {
-				console.error("Error fetching leaderboard data:", error);
-			});
-	}, [score]);
+	// useEffect(() => {
+	// 	// Fetch the leaderboard data
+	// 	fetch("/api/leaderboard")
+	// 		.then((response) => {
+	// 			if (!response.ok) {
+	// 				throw new Error("Network response was not ok");
+	// 			}
+	// 			return response.json();
+	// 		})
+	// 		.then((data) => {
+	// 			setLeaderboard(data);
+	// 			// Check if the score is in the top 10
+	// 			const isTop10 = data.length < 10 || score > data[data.length - 1].score;
+	// 			setIsTop10(isTop10);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error("Error fetching leaderboard data:", error);
+	// 		});
+	// }, [score]);
 
-	const handleNameSubmit = () => {
-		const newEntry = { name, score: parseFloat(roundedScore) };
+	// const handleNameSubmit = () => {
+	// 	const newEntry = { name, score: parseFloat(roundedScore) };
 
-		// Send the new entry to the backend to update the leaderboard
-		fetch("/api/leaderboard", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(newEntry),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				setLeaderboard(data);
-				setIsTop10(false); // Hide the prompt after submission
-			})
-			.catch((error) => {
-				console.error("Error updating leaderboard:", error);
-			});
-	};
+	// 	// Send the new entry to the backend to update the leaderboard
+	// 	fetch("/api/leaderboard", {
+	// 		method: "POST",
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 		},
+	// 		body: JSON.stringify(newEntry),
+	// 	})
+	// 		.then((response) => response.json())
+	// 		.then((data) => {
+	// 			setLeaderboard(data);
+	// 			setIsTop10(false); // Hide the prompt after submission
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error("Error updating leaderboard:", error);
+	// 		});
+	// };
 
 	return (
 		<>
@@ -65,7 +65,7 @@ const GameOver = () => {
 				>
 					Play Again
 				</button>
-				{isTop10 && (
+				{/* {isTop10 && (
 					<div className="mt-8 flex flex-col items-center">
 						<h3 className="text-xl text-center font-bold">
 							Congratulations! You made it to the top 10!
@@ -89,8 +89,8 @@ const GameOver = () => {
 						</div>
 					</div>
 				)}
-				<h2 className="text-2xl font-bold mt-8">Leaderboard</h2>
-				{leaderboard.length > 0 ? (
+				<h2 className="text-2xl font-bold mt-8">Leaderboard</h2> */}
+				{/* {leaderboard.length > 0 ? (
 					<table className="mt-4 border-collapse border border-gray-400">
 						<thead>
 							<tr>
@@ -117,7 +117,7 @@ const GameOver = () => {
 					</table>
 				) : (
 					<p className="mt-4">The leaderboard is currently empty.</p>
-				)}
+				)} */}
 			</div>
 			<Footer />
 		</>
