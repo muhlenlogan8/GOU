@@ -6,7 +6,7 @@ const Footer = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="mt-auto w-full py-4 px-4 sm:px-6 lg:px-8 mx-auto bg-blue-300 border-t border-n-4">
+    <footer className="w-full py-4 px-4 sm:px-6 lg:px-8 bg-blue-300 border-t border-n-4">
       <div className="flex flex-col items-center text-center">
         <div className="mt-2 flex">
           <p className="mr-2">
@@ -23,14 +23,14 @@ const Footer = () => {
               width={20}
               height={20}
               src={isHovered ? DevpostHover : Devpost}
-              alt=""
+              alt="Devpost"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             />
           </a>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 

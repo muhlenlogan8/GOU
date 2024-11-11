@@ -29,6 +29,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	const [coordinates, setCoordinates] = useState(null);
 	const [distance, setDistance] = useState(null);
 	const [showActualPoint, setShowActualPoint] = useState(false);
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const mapRef = useRef();
 
 	const currentPoint =
@@ -38,6 +39,15 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 					lng: imagesData[round - 1].longitude,
 			  }
 			: null;
+
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	useEffect(() => {
 		if (showActualPoint && mapRef.current) {
@@ -77,11 +87,16 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 
 	const handleSubmit = () => {
 		if (coordinates && onCoordinatesSubmit && currentPoint) {
-            const polylineBounds = L.latLngBounds([top_left, top_right, bottom_right, bottom_left]);
-            if (!polylineBounds.contains(coordinates)) {
-                alert("Selected point is outside the allowed area.");
-                return;
-            }
+			const polylineBounds = L.latLngBounds([
+				top_left,
+				top_right,
+				bottom_right,
+				bottom_left,
+			]);
+			if (!polylineBounds.contains(coordinates)) {
+				alert("Selected point is outside the allowed area.");
+				return;
+			}
 			const distanceMeters = L.latLng(coordinates).distanceTo(currentPoint);
 			const score = Math.max(0, 100 - distanceMeters / 10);
 			onCoordinatesSubmit({
@@ -127,77 +142,153 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 		[39.1083, -120.53], // Extended point below and to the left
 	];
 
-	return (
-		<div className="w-full h-full p-3 flex flex-col">
+	// Conditional return based on window size
+	if (windowWidth < 768) { // Smaller than 'md' breakpoint
+		return (
+		  <div className="w-full h-[45vh] p-1 flex flex-col">
 			<MapContainer
-				center={[39.13211, -84.5158]}
-				zoom={16}
-				minZoom={16}
-				maxBounds={[
-					[39.125, -84.525],
-					[39.14, -84.507],
-				]}
-				ref={mapRef}
-				className="w-full h-full"
-				scrollWheelZoom={true}
+			  center={[39.13211, -84.5158]}
+			  zoom={16}
+			  minZoom={16}
+			  maxBounds={[
+				[39.125, -84.525],
+				[39.14, -84.507],
+			  ]}
+			  ref={mapRef}
+			  className="w-full h-full"
+			  scrollWheelZoom={true}
 			>
-				<TileLayer
-					url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}"
-					attribution='&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-					ext="jpg"
-				/>
-				<LocationMarker />
-				{showActualPoint && coordinates && currentPoint && (
-					<>
-						<Marker
-							position={currentPoint}
-							icon={L.divIcon({ className: "bg-red-500 rounded-full w-4 h-4" })}
-						/>
-						<Polyline positions={[coordinates, currentPoint]} color="red" />
-					</>
-				)}
-				<Polyline
-					positions={[top_left, top_right, bottom_right, bottom_left, top_left]}
-					color="blue"
-					dashArray="5, 10"
-				/>
-				<Polygon
-					positions={left_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
-				<Polygon
-					positions={right_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
-				<Polygon
-					positions={top_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
-				<Polygon
-					positions={bottom_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
+			  <TileLayer
+				url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}"
+				attribution='&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+				ext="jpg"
+			  />
+			  <LocationMarker />
+			  {showActualPoint && coordinates && currentPoint && (
+				<>
+				  <Marker
+					position={currentPoint}
+					icon={L.divIcon({ className: "bg-red-500 rounded-full w-4 h-4" })}
+				  />
+				  <Polyline positions={[coordinates, currentPoint]} color="red" />
+				</>
+			  )}
+			  <Polyline
+				positions={[top_left, top_right, bottom_right, bottom_left, top_left]}
+				color="blue"
+				dashArray="5, 10"
+			  />
+			  <Polygon
+				positions={left_shade_coordinates}
+				color={null}
+				fillColor="gray"
+				fillOpacity={0.7}
+				opacity={0}
+			  />
+			  <Polygon
+				positions={right_shade_coordinates}
+				color={null}
+				fillColor="gray"
+				fillOpacity={0.7}
+				opacity={0}
+			  />
+			  <Polygon
+				positions={top_shade_coordinates}
+				color={null}
+				fillColor="gray"
+				fillOpacity={0.7}
+				opacity={0}
+			  />
+			  <Polygon
+				positions={bottom_shade_coordinates}
+				color={null}
+				fillColor="gray"
+				fillOpacity={0.7}
+				opacity={0}
+			  />
 			</MapContainer>
 			<button
-				onClick={handleSubmit}
-				className="mt-2 w-full py-2 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 focus:outline-none"
+			  onClick={handleSubmit}
+			  className="mt-2 w-full py-2 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 focus:outline-none"
 			>
-				Submit Coordinates
+			  Submit Coordinates
 			</button>
+		  </div>
+		);
+	  }
+	
+	  // Return for larger screens ('md' and above)
+	  return (
+		<div className="w-full h-full p-3 flex flex-col">
+		  <MapContainer
+			center={[39.13211, -84.5158]}
+			zoom={16}
+			minZoom={16}
+			maxBounds={[
+			  [39.125, -84.525],
+			  [39.14, -84.507],
+			]}
+			ref={mapRef}
+			className="w-full h-full"
+			scrollWheelZoom={true}
+		  >
+			<TileLayer
+			  url="https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}"
+			  attribution='&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			  ext="jpg"
+			/>
+			<LocationMarker />
+			{showActualPoint && coordinates && currentPoint && (
+			  <>
+				<Marker
+				  position={currentPoint}
+				  icon={L.divIcon({ className: "bg-red-500 rounded-full w-4 h-4" })}
+				/>
+				<Polyline positions={[coordinates, currentPoint]} color="red" />
+			  </>
+			)}
+			<Polyline
+			  positions={[top_left, top_right, bottom_right, bottom_left, top_left]}
+			  color="blue"
+			  dashArray="5, 10"
+			/>
+			<Polygon
+			  positions={left_shade_coordinates}
+			  color={null}
+			  fillColor="gray"
+			  fillOpacity={0.7}
+			  opacity={0}
+			/>
+			<Polygon
+			  positions={right_shade_coordinates}
+			  color={null}
+			  fillColor="gray"
+			  fillOpacity={0.7}
+			  opacity={0}
+			/>
+			<Polygon
+			  positions={top_shade_coordinates}
+			  color={null}
+			  fillColor="gray"
+			  fillOpacity={0.7}
+			  opacity={0}
+			/>
+			<Polygon
+			  positions={bottom_shade_coordinates}
+			  color={null}
+			  fillColor="gray"
+			  fillOpacity={0.7}
+			  opacity={0}
+			/>
+		  </MapContainer>
+		  <button
+			onClick={handleSubmit}
+			className="mt-2 w-full py-2 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 focus:outline-none"
+		  >
+			Submit Coordinates
+		  </button>
 		</div>
-	);
+	  );
 });
 
 export default Map;

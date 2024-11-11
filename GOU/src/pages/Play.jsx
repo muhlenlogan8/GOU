@@ -100,8 +100,8 @@ const Play = () => {
 
     return (
         <div className="bg-blue-100 flex flex-col h-full relative">
-            <div className="flex-grow flex overflow-hidden">
-                <div className="w-2/5 p-4 relative">
+            <div className="flex-grow flex flex-col md:flex-row overflow-hidden">
+                <div className="w-full md:w-2/5 p-2 md:p-4 relative">
                     <ImageContainer
                         ref={imageContainerRef}
                         round={round}
@@ -138,7 +138,7 @@ const Play = () => {
                         </div>
                     )}
                 </div>
-                <div className="w-3/5 p-4 relative">
+                <div className="w-full md:w-3/5 p-2 md:p-4 relative">
                     <Map ref={mapRef} onCoordinatesSubmit={handleCoordinatesSubmit} imagesData={imagesData} round={round} />
                 </div>
             </div>
