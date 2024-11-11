@@ -55,9 +55,9 @@ import React, {
 		return (
 		  <div className="flex items-center h-[45vh] justify-center w-full overflow-hidden">
 			<div className="flex flex-col items-center p-1 w-screen">
-			  <h1 className="text-2xl font-bold mb-2 text-center w-full">
+			  {/* <h1 className="text-2xl font-bold mb-2 text-center w-full">
 				University of Cincinnati Uni-Guesser
-			  </h1>
+			  </h1> */}
 			  <ScoreAndRound
 				round={round}
 				totalRounds={totalRounds}
@@ -73,9 +73,9 @@ import React, {
 				  />
 				)}
 			  </div>
-			  <p className="font-bold text-center">
+			  {/* <p className="font-bold text-center">
 				Select on the map where you think this image was taken!
-			  </p>
+			  </p> */}
 			</div>
 		  </div>
 		);
