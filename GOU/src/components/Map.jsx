@@ -148,8 +148,8 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 		  <div className="w-full h-[45vh] p-1 flex flex-col">
 			<MapContainer
 			  center={[39.13211, -84.5158]}
-			  zoom={16}
-			  minZoom={16}
+			  zoom={15}
+			  minZoom={15}
 			  maxBounds={[
 				[39.125, -84.525],
 				[39.14, -84.507],

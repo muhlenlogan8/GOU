@@ -53,7 +53,7 @@ import React, {
 	  // Conditional return based on window size
 	  if (windowWidth < 768) { // Smaller than 'md' breakpoint
 		return (
-		  <div className="flex items-center h-[45vh] justify-center w-full overflow-hidden">
+		  <div className="flex items-center h-[40vh] justify-center w-full overflow-hidden">
 			<div className="flex flex-col items-center p-1 w-screen">
 			  {/* <h1 className="text-2xl font-bold mb-2 text-center w-full">
 				University of Cincinnati Uni-Guesser
