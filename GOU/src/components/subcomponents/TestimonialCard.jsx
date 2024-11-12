@@ -6,7 +6,7 @@ const TestimonialCard = ({ imageSrc, name, title, testimonial, linkedInUrl }) =>
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="flex flex-col bg-white rounded-xl h-auto shadow-md">
+    <div className="flex flex-col bg-white rounded-xl h-full shadow-md">
       {/* Name, Title, and Image side by side with LinkedIn icon aligned to the right */}
       <div className="flex items-center gap-x-4 p-4">
         <img
