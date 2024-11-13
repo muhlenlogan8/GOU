@@ -18,16 +18,11 @@ import React, {
 	  // Update windowWidth on window resize
 	  useEffect(() => {
 		const handleResize = () => setWindowWidth(window.innerWidth);
-  
 		window.addEventListener("resize", handleResize);
-  
 		return () => window.removeEventListener("resize", handleResize);
 	  }, []);
   
-	  useEffect(() => {
-		// Can adjust the score based on the round
-	  }, [round]);
-  
+	  // Function to update the score
 	  const handleScoreUpdate = (newScore) => {
 		setScore((prevScore) => {
 		  const updatedScore = prevScore + newScore;
@@ -36,6 +31,7 @@ import React, {
 		});
 	  };
   
+	  // UseImperativeHandle to expose functions to parent component so they can be called directly in Play.jsx
 	  useImperativeHandle(ref, () => ({
 		handleScoreUpdate,
 		nextRound() {

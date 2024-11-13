@@ -4,6 +4,7 @@ import logo from "../assets/UniGuesser_Logo.png";
 const Header = () => {
     const [textColor, setTextColor] = useState("rgb(255, 255, 255)");
 
+    // Change text color based on scroll position
     useEffect(() => {
         const handleScroll = () => {
             const scrollTop = window.scrollY;
@@ -25,6 +26,7 @@ const Header = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Smooth scroll to anchor links and add offset
     const handleAnchorClick = (e, targetId) => {
         e.preventDefault();
         const targetElement = document.getElementById(targetId);

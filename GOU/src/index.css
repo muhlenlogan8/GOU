@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Tailwind CSS that can be used inline */
 .h-screen-adjusted-image-container {
     height: calc(95vh - 34px);
 }

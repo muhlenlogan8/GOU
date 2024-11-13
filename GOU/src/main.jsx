@@ -5,8 +5,8 @@ import App from "./App.jsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
-	<StrictMode>
-		<Router>
+	<StrictMode> {/* StrictMode is a tool for highlighting potential problems in an application */}
+		<Router> {/* Router enables URL-based navigation within the app */}
 			<App />
 		</Router>
 	</StrictMode>

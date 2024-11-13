@@ -1,5 +1,7 @@
 # Uni-Guesser
 
+Play Here: https://uni-guesser-two.vercel.app/
+
 ## Inspiration
 We were inspired by the game Geoguessr and thought having a location specific Geoguessr would be a fun take to the popular game.
 

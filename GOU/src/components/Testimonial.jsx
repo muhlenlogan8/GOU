@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion"; // For animations
 import TestimonialCard from "./subcomponents/TestimonialCard";
 import LoganImage from "../assets/Logan.jpg";
 import CameranImage from "../assets/Cameran.jpg";
 import AndyImage from "../assets/Andy.jpg";
 
 const Testimonial = () => {
+	// Testimonials Data
 	const testimonials = [
 		{
 			imageSrc: LoganImage,
@@ -33,6 +33,7 @@ const Testimonial = () => {
 		},
 	];
 
+	// Card Animation Variants (So they animate when they come into view)
 	const cardVariants = {
 		hidden: {
 			opacity: 0,
@@ -59,25 +60,27 @@ const Testimonial = () => {
 
 			{/* Grid of Testimonial Cards */}
 			<div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {testimonials.map((testimonial, index) => (
-          <motion.div
-            key={index}
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            className="flex flex-col"
-          >
-            <TestimonialCard
-              imageSrc={testimonial.imageSrc}
-              name={testimonial.name}
-              title={testimonial.title}
-              testimonial={testimonial.testimonial}
-              linkedInUrl={testimonial.linkedInUrl}
-            />
-          </motion.div>
-        ))}
-      </div>
+				{testimonials.map((testimonial, index) => (
+					// Animate each card
+					<motion.div
+						key={index}
+						variants={cardVariants}
+						initial="hidden"
+						whileInView="visible"
+						viewport={{ once: true, margin: "-100px" }}
+						className="flex flex-col"
+					>
+						{/* Testimonial Card (Actual component or html to be animated) */}
+						<TestimonialCard
+							imageSrc={testimonial.imageSrc}
+							name={testimonial.name}
+							title={testimonial.title}
+							testimonial={testimonial.testimonial}
+							linkedInUrl={testimonial.linkedInUrl}
+						/>
+					</motion.div>
+				))}
+			</div>
 		</div>
 	);
 };

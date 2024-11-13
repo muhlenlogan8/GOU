@@ -5,15 +5,15 @@ import Testimonial from "../components/Testimonial";
 import Footer from "../components/Footer";
 
 const LandingPage = () => {
-  return (
-    <>
-	  <HomeHeader />
-      <Hero />
-	  <Mission />
-      <Testimonial />
-      <Footer />
-    </>
-  );
+	return (
+		<>
+			<HomeHeader />
+			<Hero />
+			<Mission />
+			<Testimonial />
+			<Footer />
+		</>
+	);
 };
 
 export default LandingPage;
