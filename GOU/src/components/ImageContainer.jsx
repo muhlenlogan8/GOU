@@ -9,7 +9,7 @@ import React, {
   import ScoreAndRound from "./subcomponents/ScoreAndRound";
   
   const ImageContainer = forwardRef(
-	({ round, setRound, onScoreUpdate, imagesData }, ref) => {
+	({ round, setRound, imagesData }, ref) => {
 	  const totalRounds = 5;
 	  const [score, setScore] = useState(0);
 	  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -18,15 +18,14 @@ import React, {
 	  // Update windowWidth on window resize
 	  useEffect(() => {
 		const handleResize = () => setWindowWidth(window.innerWidth);
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
+		window.addEventListener("resize", handleResize); // Adds event listener to update windowWidth on window resize
+		return () => window.removeEventListener("resize", handleResize); // Removes event listener when component unmounts to cleanup
 	  }, []);
   
 	  // Function to update the score
 	  const handleScoreUpdate = (newScore) => {
 		setScore((prevScore) => {
 		  const updatedScore = prevScore + newScore;
-		  if (onScoreUpdate) onScoreUpdate(updatedScore); // Use updated score
 		  return updatedScore;
 		});
 	  };
@@ -34,13 +33,6 @@ import React, {
 	  // UseImperativeHandle to expose functions to parent component so they can be called directly in Play.jsx
 	  useImperativeHandle(ref, () => ({
 		handleScoreUpdate,
-		nextRound() {
-		  if (round < totalRounds) {
-			setRound(round + 1);
-		  } else {
-			navigate("/game-over", { state: { score } });
-		  }
-		},
 		getScore() {
 		  return score;
 		},

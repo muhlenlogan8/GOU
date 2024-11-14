@@ -28,8 +28,8 @@ L.Icon.Default.mergeOptions({
 // forwardRef to allow parent component to pass a ref to this component
 const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	const [coordinates, setCoordinates] = useState(null);
-	const [distance, setDistance] = useState(null);
 	const [showActualPoint, setShowActualPoint] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const mapRef = useRef();
 
@@ -63,8 +63,8 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	useImperativeHandle(ref, () => ({
 		resetMap() {
 			setCoordinates(null);
-			setDistance(null);
 			setShowActualPoint(false);
+			setIsSubmitted(false); // Reset submission status
 			// Reset map to the center or set new currentPoint for the next round
 			if (mapRef.current) {
 				const map = mapRef.current;
@@ -77,12 +77,9 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	const LocationMarker = () => {
 		useMapEvents({
 			click(e) {
-				setCoordinates(e.latlng);
-				if (currentPoint) {
-					const distanceMeters = L.latLng(e.latlng).distanceTo(currentPoint);
-					setDistance(distanceMeters.toFixed(2));
-				} else {
-					console.error("currentPoint is undefined");
+				// Only allow marker movement if the guess hasn't been submitted
+				if (!isSubmitted) {
+					setCoordinates(e.latlng);
 				}
 			},
 		});
@@ -92,15 +89,9 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	// Handle the submission of coordinates
 	const handleSubmit = () => {
 		if (coordinates && onCoordinatesSubmit && currentPoint) {
-			const polylineBounds = L.latLngBounds([
-				top_left,
-				top_right,
-				bottom_right,
-				bottom_left,
-			]);
 			// Check if the selected point is within the allowed area and alert if not
 			if (!polylineBounds.contains(coordinates)) {
-				alert("Selected point is outside the allowed area.");
+				alert("Your guess is outside the allowed area. Please try again.");
 				return;
 			}
 			const distanceMeters = L.latLng(coordinates).distanceTo(currentPoint);
@@ -110,6 +101,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 				distance: distanceMeters.toFixed(2),
 			});
 			setShowActualPoint(true); // Ensure this updates the state
+			setIsSubmitted(true); // Disable further submissions and marker movement
 		} else {
 			console.error("coordinates or currentPoint is undefined");
 		}
@@ -120,35 +112,52 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 	const top_right = [39.135287, -84.511129];
 	const bottom_left = [39.128686, -84.520586];
 	const bottom_right = [39.128115, -84.511767];
+	const polylineBounds = L.latLngBounds([
+		top_left,
+		top_right,
+		bottom_right,
+		bottom_left,
+	]);
 
 	// Coordinates for the shaded areas outside the campus boundaries
-	const left_shade_coordinates = [
-		[39.13598, -84.53], // Extended point above and to the left
-		top_left,
-		bottom_left,
-		[39.1275, -94.53], // Extended point below and to the left
-	];
-	const right_shade_coordinates = [
-		[49.14, -84.51112], // Extended point above and to the right
-		top_right,
-		bottom_right,
-		[39.1275, -70.51], // Extended point below and to the right
-	];
-	const top_shade_coordinates = [
-		[39.1399883, -85.53], // Extended point to the top left of the area
-		[49.14, -84.51], // Extended point to the top right of the area
-		top_right,
-		top_left,
-	];
-	const bottom_shade_coordinates = [
-		bottom_left,
-		bottom_right,
-		[39.1275, -74.51], // Extended point below and to the right
-		[39.1083, -120.53], // Extended point below and to the left
+	const shadeCoordinates = [
+		{
+			positions: [
+				[39.13598, -84.53], // Extended point above and to the left
+				top_left,
+				bottom_left,
+				[39.1275, -94.53], // Extended point below and to the left
+			],
+		},
+		{
+			positions: [
+				[49.14, -84.51112], // Extended point above and to the right
+				top_right,
+				bottom_right,
+				[39.1275, -70.51], // Extended point below and to the right
+			],
+		},
+		{
+			positions: [
+				[39.1399883, -85.53], // Extended point to the top left of the area
+				[49.14, -84.51], // Extended point to the top right of the area
+				top_right,
+				top_left,
+			],
+		},
+		{
+			positions: [
+				bottom_left,
+				bottom_right,
+				[39.1275, -74.51], // Extended point below and to the right
+				[39.1083, -120.53], // Extended point below and to the left
+			],
+		},
 	];
 
 	// Conditional return based on window size
-	if (windowWidth < 768) { // Smaller than 'md' breakpoint
+	if (windowWidth < 768) {
+		// Smaller than 'md' breakpoint
 		return (
 			<div className="w-full h-[45vh] p-1 flex flex-col">
 				<MapContainer
@@ -195,41 +204,24 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 						dashArray="5, 10"
 					/>
 					{/* Polygons of gray around campus */}
-					<Polygon
-						positions={left_shade_coordinates}
-						color={null}
-						fillColor="gray"
-						fillOpacity={0.7}
-						opacity={0}
-					/>
-					<Polygon
-						positions={right_shade_coordinates}
-						color={null}
-						fillColor="gray"
-						fillOpacity={0.7}
-						opacity={0}
-					/>
-					<Polygon
-						positions={top_shade_coordinates}
-						color={null}
-						fillColor="gray"
-						fillOpacity={0.7}
-						opacity={0}
-					/>
-					<Polygon
-						positions={bottom_shade_coordinates}
-						color={null}
-						fillColor="gray"
-						fillOpacity={0.7}
-						opacity={0}
-					/>
+					{shadeCoordinates.map((shade, index) => (
+						<Polygon
+							key={index}
+							positions={shade.positions}
+							color={null}
+							fillColor="gray"
+							fillOpacity={0.7}
+							opacity={0}
+						/>
+					))}
 				</MapContainer>
 				{/* Submit coordinates button */}
 				<button
 					onClick={handleSubmit}
 					className="mt-2 w-full py-2 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 focus:outline-none"
+					disabled={isSubmitted} // Disable button after submission
 				>
-					Submit Coordinates
+					Submit Guess!
 				</button>
 			</div>
 		);
@@ -263,7 +255,9 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 					<>
 						<Marker
 							position={currentPoint}
-							icon={L.divIcon({ className: "bg-red-500 rounded-full w-4 h-4" })}
+							icon={L.divIcon({
+								className: "bg-red-500 rounded-full w-4 h-4",
+							})}
 						/>
 						<Polyline positions={[coordinates, currentPoint]} color="red" />
 					</>
@@ -275,41 +269,24 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 					dashArray="5, 10"
 				/>
 				{/* Polygons of gray around campus */}
-				<Polygon
-					positions={left_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
-				<Polygon
-					positions={right_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
-				<Polygon
-					positions={top_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
-				<Polygon
-					positions={bottom_shade_coordinates}
-					color={null}
-					fillColor="gray"
-					fillOpacity={0.7}
-					opacity={0}
-				/>
+				{shadeCoordinates.map((shade, index) => (
+					<Polygon
+						key={index}
+						positions={shade.positions}
+						color={null}
+						fillColor="gray"
+						fillOpacity={0.7}
+						opacity={0}
+					/>
+				))}
 			</MapContainer>
 			{/* Submit coordinates button */}
 			<button
 				onClick={handleSubmit}
 				className="mt-2 w-full py-2 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 focus:outline-none"
+				disabled={isSubmitted} // Disable button after submission
 			>
-				Submit Coordinates
+				Submit Guess!
 			</button>
 		</div>
 	);

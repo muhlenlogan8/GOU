@@ -12,6 +12,11 @@
     height: calc(90vh - 65px);
 }
 
+/* Add the hue change filter for the red color marker */
+.huechange {
+    filter: hue-rotate(120deg);
+  }
+
 * {
     scroll-behavior: smooth;
     /* Smooth scrolling when navigating within the page (anchor links) */

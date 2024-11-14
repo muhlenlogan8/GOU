@@ -11,10 +11,11 @@ const Play = () => {
 	const [imagesData, setImagesData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const navigate = useNavigate();
+
 	// useRef to access the ImageContainer and Map components directly (For updating score and resetting map)
 	const imageContainerRef = useRef(null);
 	const mapRef = useRef(null);
-	const navigate = useNavigate();
 
 	const totalRounds = 5;
 	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // From Vercel environment variables
@@ -50,9 +51,8 @@ const Play = () => {
 
 	// Handle the submission of coordinates and calculate the score
 	const handleCoordinatesSubmit = (data) => {
-		if (imagesData.length === 0 || round > imagesData.length) {
-			console.error("Invalid round or imagesData not loaded");
-			return;
+		if (round > imagesData.length) {
+			return <div>Not enough images to continue the game</div>;
 		}
 
 		// Set the current point lat and long to the coordinates of the image for the current round
@@ -61,25 +61,21 @@ const Play = () => {
 			lng: imagesData[round - 1].longitude,
 		};
 
+		// Calculate the distance in meters between the submitted coordinates and the actual location
 		const distanceMeters = L.latLng(data.coordinates).distanceTo(currentPoint);
 		let score = 0;
 		// Calculate the score based on the distance from the actual location
 		if (distanceMeters < 8) {
 			score = 100;
 		} else if (distanceMeters <= 100) {
-			score = Math.max(0, 100 - distanceMeters);
+			score = Math.max(0, 100 - distanceMeters + 8);
 		}
-		score = parseFloat(score.toFixed(2)); // Round the score to 2 decimal points
+		score = score.toFixed(2); // Round the score to 2 decimal points (score is a String, needs parseFloat to convert to number)
 		setSubmittedData({ ...data, distance: distanceMeters, score }); // Update the submitted data to be displayed in UI
 		setShowPopup(true);
 		if (imageContainerRef.current) {
-			imageContainerRef.current.handleScoreUpdate(score); // Update score in ImageContainer
+			imageContainerRef.current.handleScoreUpdate(parseFloat(score)); // Update score in ImageContainer by calling ImageContainer handleScoreUpdate function
 		}
-	};
-
-	const handleScoreUpdate = (newScore) => {
-		console.log("Updated Score:", newScore);
-		// Do something with the updated score (e.g., update the state or trigger other actions)
 	};
 
 	// Close the popup and navigate to the next round or end the game
@@ -95,12 +91,12 @@ const Play = () => {
 			navigate("/game-over", { state: { score: finalScore } });
 		}
 
-		// Reset the map and image container for the next round
+		// Reset the map and image container for the next round (.current is used to access the current instance of the ref)
 		if (mapRef.current) {
-			mapRef.current.resetMap();
+			mapRef.current.resetMap(); // Call resetMap function of the Map component
 		}
 		if (imageContainerRef.current) {
-			imageContainerRef.current.nextRound();
+			imageContainerRef.current.nextRound(); // Call nextRound function of the ImageContainer component
 		}
 	};
 
@@ -112,23 +108,13 @@ const Play = () => {
 						ref={imageContainerRef} // Allows direct access to the ImageContainer component
 						round={round}
 						setRound={setRound}
-						onScoreUpdate={handleScoreUpdate}
-						imagesData={imagesData}
+						imagesData={imagesData} // Pass the images data to the ImageContainer component
 					/>
 					{/* Conditionally render results popup if showPopup calls for it */}
 					{showPopup && (
 						<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 							<div className="bg-white p-8 rounded shadow-lg w-3/4">
-								<h2 className="text-2xl font-bold mb-4 text-center">Result</h2>
-								<p className="text-center">
-									Submitted Point:{" "}
-									{/* Display coordinates if they exist else display "No coordinates submitted" */}
-									{submittedData?.coordinates
-										? `${submittedData.coordinates.lat.toFixed(
-												5
-										  )}, ${submittedData.coordinates.lng.toFixed(5)}`
-										: "No coordinates submitted"}
-								</p>
+								<h2 className="text-2xl font-bold mb-4 text-center">Results</h2>
 								<p className="text-center">
 									Distance from actual location:{" "}
 									{submittedData?.distance?.toFixed(2) || "N/A"} meters
