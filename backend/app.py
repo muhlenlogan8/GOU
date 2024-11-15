@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from google.cloud import storage
 import random
@@ -6,6 +6,7 @@ import json
 import os
 
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "my-local-dev-secret-key")
 CORS(app)  # Allow cross-origin requests
 
 credentialsPath = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
@@ -25,57 +26,27 @@ def getCoordsData():
         data = json.load(f)
     return data
 
-def getLeaderboardData():
-    blob = bucket.blob("leaderboard.json")
-    blob.download_to_filename("leaderboard.json")
-    with open("leaderboard.json") as f:
-        data = json.load(f)
-    return data
-
-def saveLeaderboardData(data):
-    print(data)
-    with open("leaderboard.json", "w") as f:
-        json.dump(data, f)
-    blob = bucket.blob("leaderboard.json")
-    print(blob)
-    blob.upload_from_filename("leaderboard.json")
-
 @app.route("/api/data", methods=["GET"])
 def getData():
-    data = getCoordsData()
-    selectedData = random.sample(data, 5)
+    # Check if there already is an image list in the session
+    if "shuffledData" not in session or len(session["shuffledData"]) == 0:
+        data = getCoordsData() # Fetch all data from coordinates.json
+        session["shuffledData"] = random.sample(data, 60) # Store a random sample of 60 items in session
+        session["currentIndex"] = 0  # Track the current image index
+        
+    # Get the next 5 images for the game
+    currentIndex = session["currentIndex"]
+    selectedData = session["shuffledData"][currentIndex:currentIndex + 5] # Get the next 5 images (current index to current index + 5)
+
+    # Update the current index for the next request
+    session["currentIndex"] += 5
+    
+    # Reset if all images have been used
+    if session["currentIndex"] >= len(session["shuffledData"]):
+        session.pop("shuffledData", None)
+        session.pop("currentIndex", None)
+    
     return jsonify(selectedData)
-
-@app.route("/api/leaderboard", methods=["GET"])
-def getLeaderboard():
-    data = getLeaderboardData()
-    return jsonify(data)
-
-@app.route("/api/leaderboard", methods=["POST"])
-def updateLeaderboard():
-    pass
-    newEntry = request.json
-    print(newEntry)
-    leaderboard = getLeaderboardData()
-
-    # Add the new entry to the leaderboard
-    leaderboard.append(newEntry)
-    leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
-    
-    # Limit leaderboard to the top 10 entries
-    if len(leaderboard) > 10:
-        leaderboard = leaderboard[:10]
-    
-    # Save the updated leaderboard in memory, not through a file
-    try:
-        blob = bucket.blob("leaderboard.json")
-        blob.upload_from_string(json.dumps(leaderboard), content_type='application/json')
-        print("Leaderboard updated and saved successfully.")
-    except Exception as e:
-        print("Error saving leaderboard to Google Cloud Storage:", e)
-        return jsonify({"error": "Failed to save leaderboard"}), 500
-
-    return jsonify(leaderboard)
 
 if __name__ == "__main__":
     app.run(debug=True)

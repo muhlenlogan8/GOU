@@ -12,7 +12,7 @@ const Testimonial = () => {
 			name: "Logan Muhlen",
 			title: "Computer Engineering Student",
 			testimonial:
-				"I'm a fourth-year computer engineering student who loves doing personal projects, hackathons, and indoor soccer. This is my 3th hackathon with this team and we are really excited with how this turned out.",
+				"I'm a fourth-year computer engineering student who loves doing personal projects, hackathons, and indoor soccer. This is my 3rd hackathon with this team and we are really excited with how this turned out.",
 			linkedInUrl: "https://www.linkedin.com/in/logan-muhlen-54a53b131/",
 		},
 		{

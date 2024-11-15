@@ -126,7 +126,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 				[39.13598, -84.53], // Extended point above and to the left
 				top_left,
 				bottom_left,
-				[39.1275, -94.53], // Extended point below and to the left
+				[39.0875, -94.53], // Extended point below and to the left
 			],
 		},
 		{
@@ -150,7 +150,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 				bottom_left,
 				bottom_right,
 				[39.1275, -74.51], // Extended point below and to the right
-				[39.1083, -120.53], // Extended point below and to the left
+				[39.0083, -120.53], // Extended point below and to the left
 			],
 		},
 	];

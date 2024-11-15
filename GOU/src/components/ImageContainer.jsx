@@ -9,11 +9,10 @@ import React, {
   import ScoreAndRound from "./subcomponents/ScoreAndRound";
   
   const ImageContainer = forwardRef(
-	({ round, setRound, imagesData }, ref) => {
+	({ round, imagesData }, ref) => {
 	  const totalRounds = 5;
 	  const [score, setScore] = useState(0);
 	  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	  const navigate = useNavigate();
   
 	  // Update windowWidth on window resize
 	  useEffect(() => {

@@ -33,6 +33,7 @@ const Play = () => {
 			.then((data) => {
 				setImagesData(data);
 				setLoading(false);
+				setRound(1); // Reset round to 1 after fetching new data
 			})
 			.catch((error) => {
 				setError(error);
@@ -95,9 +96,6 @@ const Play = () => {
 		if (mapRef.current) {
 			mapRef.current.resetMap(); // Call resetMap function of the Map component
 		}
-		if (imageContainerRef.current) {
-			imageContainerRef.current.nextRound(); // Call nextRound function of the ImageContainer component
-		}
 	};
 
 	return (
@@ -107,7 +105,6 @@ const Play = () => {
 					<ImageContainer
 						ref={imageContainerRef} // Allows direct access to the ImageContainer component
 						round={round}
-						setRound={setRound}
 						imagesData={imagesData} // Pass the images data to the ImageContainer component
 					/>
 					{/* Conditionally render results popup if showPopup calls for it */}
