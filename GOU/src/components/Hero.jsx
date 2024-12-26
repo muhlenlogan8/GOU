@@ -26,16 +26,16 @@ const Hero = () => {
 				>
 					Welcome to Uni-Guesser!
 				</motion.h1>
-				<p className="mt-4 text-xl sm:text-2xl text-gray-200">
+				<p className="mt-4 text-xl sm:text-2xl font-semibold text-gray-200">
 					Test your knowledge of the University of Cincinnati’s campus!
-					<br /> Can you guess the location from a few clues?
-					<br /> Challenge your friends and see who knows the campus best!
+					<br /> Can you guess the location from just an image?
+					<br /> Challenge your friends and compete to get on the leaderboard!
 				</p>
 				<div className="mt-10 flex justify-center">
 					{/* Animate Play Now button to get bigger on hover */}
 					<motion.a
 						href="/play"
-						className="rounded-lg bg-slate-600 px-6 py-3 text-lg font-semibold text-white shadow-md hover:bg-blue-500 transition duration-300 transform hover:scale-105"
+						className="rounded-lg bg-n-6 px-6 py-3 text-lg font-semibold text-white shadow-md hover:bg-blue-600 transition duration-300 transform hover:scale-105"
 						whileHover={{ scale: 1.05 }}
 					>
 						Play Now

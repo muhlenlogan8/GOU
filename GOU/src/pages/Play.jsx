@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import ImageContainer from "../components/ImageContainer";
 import Map from "../components/Map";
 import Footer from "../components/Footer";
@@ -11,6 +12,7 @@ const Play = () => {
 	const [imagesData, setImagesData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [gameId, setGameId] = useState(uuidv4()); // Generate a unique game ID
 	const navigate = useNavigate();
 
 	// useRef to access the ImageContainer and Map components directly (For updating score and resetting map)
@@ -65,6 +67,7 @@ const Play = () => {
 		// Calculate the distance in meters between the submitted coordinates and the actual location
 		const distanceMeters = L.latLng(data.coordinates).distanceTo(currentPoint);
 		let score = 0;
+
 		// Calculate the score based on the distance from the actual location
 		if (distanceMeters < 8) {
 			score = 100;
@@ -72,8 +75,10 @@ const Play = () => {
 			score = Math.max(0, 100 - distanceMeters + 8);
 		}
 		score = score.toFixed(2); // Round the score to 2 decimal points (score is a String, needs parseFloat to convert to number)
+		
 		setSubmittedData({ ...data, distance: distanceMeters, score }); // Update the submitted data to be displayed in UI
 		setShowPopup(true);
+
 		if (imageContainerRef.current) {
 			imageContainerRef.current.handleScoreUpdate(parseFloat(score)); // Update score in ImageContainer by calling ImageContainer handleScoreUpdate function
 		}
@@ -89,7 +94,7 @@ const Play = () => {
 		} else {
 			// Else if all rounds are completed, navigate to game over page
 			const finalScore = imageContainerRef.current.getScore();
-			navigate("/game-over", { state: { score: finalScore } });
+			navigate("/game-over", { state: { score: finalScore, gameId } }); // Pass the final score and game ID to the Game Over page
 		}
 
 		// Reset the map and image container for the next round (.current is used to access the current instance of the ref)
@@ -99,7 +104,7 @@ const Play = () => {
 	};
 
 	return (
-		<div className="bg-blue-100 flex flex-col h-full relative">
+		<div className="bg-n-2 flex flex-col h-full relative">
 			<div className="flex-grow flex flex-col md:flex-row overflow-hidden">
 				<div className="w-full md:w-2/5 p-2 md:p-4 relative">
 					<ImageContainer
@@ -122,7 +127,7 @@ const Play = () => {
 								<div className="flex justify-center">
 									<button
 										onClick={handleClosePopup} // Close the popup and go to next round or end game
-										className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+										className="mt-4 px-4 py-2 bg-n-5 text-white rounded hover:bg-blue-600"
 									>
 										{round === 5 ? "End Game" : "Next Round"}{" "}
 										{/* Change button text based on round */}

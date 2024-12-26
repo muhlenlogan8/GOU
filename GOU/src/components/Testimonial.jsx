@@ -28,7 +28,7 @@ const Testimonial = () => {
 			name: "Andy Au",
 			title: "Cybersecurity Student",
 			testimonial:
-				"I'm a fourth year cybersecurity (IT) major, and this is my third Hackathon. I like Jiu-jitsu, video games, hanging out with my friends, and I have goals to join the military in the future.",
+				"I'm a fourth-year cybersecurity (IT) major, and this is my third Hackathon. I like Jiu-jitsu, video games, hanging out with my friends, and I have goals to join the military in the future.",
 			linkedInUrl: "https://www.linkedin.com/in/andyau107/",
 		},
 	];
@@ -50,11 +50,11 @@ const Testimonial = () => {
 	};
 
 	return (
-		<div id="meet-the-team" className="py-12 px-4 bg-blue-50">
+		<div id="meet-the-team" className="pb-12 px-4 bg-n-2">
 			<div className="max-w-7xl mx-auto text-center">
 				{/* Title */}
 				<h2 className="text-2xl sm:text-3xl lg:text-4xl text-black font-semibold">
-					Meet the Team!
+					Meet the Team
 				</h2>
 			</div>
 

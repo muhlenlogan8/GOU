@@ -73,7 +73,7 @@ import React, {
 		<div className="flex items-center h-screen-adjusted-image-container justify-center w-full overflow-hidden">
 		  <div className="flex flex-col items-center md:p-2 w-screen">
 			<h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-6 text-center w-full">
-			  University of Cincinnati Uni-Guesser
+			  University of Cincinnati
 			</h1>
 			<ScoreAndRound
 			  round={round}

@@ -63,16 +63,14 @@ const Header = () => {
                     <a
                         href="#our-mission"
                         onClick={(e) => handleAnchorClick(e, "our-mission")}
-                        className="text-xl font-semibold leading-6 hover:text-indigo-400 hover:underline"
-                        style={{ color: textColor }}
+                        className="text-xl font-semibold leading-6 hover:text-n-6 hover:underline"
                     >
                         Our Mission
                     </a>
                     <a
                         href="#meet-the-team"
                         onClick={(e) => handleAnchorClick(e, "meet-the-team")}
-                        className="text-xl font-semibold leading-6 hover:text-indigo-400 hover:underline"
-                        style={{ color: textColor }}
+                        className="text-xl font-semibold leading-6 hover:text-n-6 hover:underline"
                     >
                         Meet the Team
                     </a>
@@ -82,8 +80,7 @@ const Header = () => {
                 <div className="flex items-center justify-end flex-1 md:flex-none">
                     <a
                         href="/play"
-                        className="text-xl font-semibold leading-6 hover:text-indigo-400 hover:underline"
-                        style={{ color: textColor }}
+                        className="text-xl font-semibold leading-6 hover:text-n-6 hover:underline"
                     >
                         Play Game
                     </a>
