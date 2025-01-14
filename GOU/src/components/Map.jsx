@@ -26,7 +26,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // forwardRef to allow parent component to pass a ref to this component
-const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
+const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round, distance }, ref) => {
 	const [coordinates, setCoordinates] = useState(null);
 	const [showActualPoint, setShowActualPoint] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
@@ -65,10 +65,12 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 			setCoordinates(null);
 			setShowActualPoint(false);
 			setIsSubmitted(false); // Reset submission status
-			// Reset map to the center or set new currentPoint for the next round
+
+			// Reset map to the center or set new zoom level based on the window width
 			if (mapRef.current) {
 				const map = mapRef.current;
-				map.setView([39.13211, -84.5158], 16); // Reset the map view
+				const defaultZoom = windowWidth < 768 ? 14 : 16; // More zoomed out for smaller screens
+				map.setView([39.13211, -84.5158], defaultZoom); // Reset the map view with dynamic zoom level
 			}
 		},
 	}));
@@ -217,7 +219,7 @@ const Map = forwardRef(({ onCoordinatesSubmit, imagesData, round }, ref) => {
 				{/* Submit coordinates button */}
 				<button
 					onClick={handleSubmit}
-					className="mt-2 w-full py-2 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 focus:outline-none"
+					className="mt-2 py-2 bg-green-500 text-white rounded-lg shadow-md font-semibold hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all"
 					disabled={isSubmitted} // Disable button after submission
 				>
 					Submit Guess!

@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import ImageContainer from "../components/ImageContainer";
 import Map from "../components/Map";
+import ResultsPopup from "../components/ResultsPopup";
+import supabase from "../../supabase";
+import LoadingSpinner from "../components/LoadingSpinner";
 import Footer from "../components/Footer";
 
 const Play = () => {
@@ -24,8 +27,8 @@ const Play = () => {
 
 	// Fetch images data from the backend
 	useEffect(() => {
-		fetch(`${BACKEND_URL}/api/data`)
-			// fetch("api/data")
+		// fetch(`${BACKEND_URL}/api/data`)
+		fetch("api/data")
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
@@ -45,7 +48,7 @@ const Play = () => {
 
 	// Check for loading, error, or no data and return appropriate messages if so
 	if (loading) {
-		return <div>Loading...</div>;
+		return <LoadingSpinner text="Preparing your game..." />;
 	} else if (error) {
 		return <div>Error: {error.message}</div>;
 	} else if (imagesData.length === 0) {
@@ -69,18 +72,31 @@ const Play = () => {
 		let score = 0;
 
 		// Calculate the score based on the distance from the actual location
-		if (distanceMeters < 8) {
+		if (distanceMeters < 10) {
 			score = 100;
 		} else if (distanceMeters <= 100) {
-			score = Math.max(0, 100 - distanceMeters + 8);
+			score = Math.max(0, 100 - distanceMeters + 10);
 		}
 		score = score.toFixed(2); // Round the score to 2 decimal points (score is a String, needs parseFloat to convert to number)
-		
+
 		setSubmittedData({ ...data, distance: distanceMeters, score }); // Update the submitted data to be displayed in UI
 		setShowPopup(true);
 
 		if (imageContainerRef.current) {
 			imageContainerRef.current.handleScoreUpdate(parseFloat(score)); // Update score in ImageContainer by calling ImageContainer handleScoreUpdate function
+		}
+	};
+
+	// Submit reported image to supabase database
+	const handleImageReport = async () => {
+		const { data, error } = await supabase.from("reported").insert([
+			{
+				image: imagesData[round - 1].image_name,
+				gameId,
+			},
+		]);
+		if (error) {
+			console.error("Error reporting image:", error.message);
 		}
 	};
 
@@ -104,9 +120,9 @@ const Play = () => {
 	};
 
 	return (
-		<div className="bg-n-2 flex flex-col h-full relative">
-			<div className="flex-grow flex flex-col md:flex-row overflow-hidden">
-				<div className="w-full md:w-2/5 p-2 md:p-4 relative">
+		<div className="flex flex-col min-h-screen bg-n-2">
+			<main className="flex-grow flex flex-col md:flex-row overflow-hidden">
+				<div className="w-full md:w-1/2 pt-1 md:pl-2 relative flex items-center justify-center">
 					<ImageContainer
 						ref={imageContainerRef} // Allows direct access to the ImageContainer component
 						round={round}
@@ -114,30 +130,18 @@ const Play = () => {
 					/>
 					{/* Conditionally render results popup if showPopup calls for it */}
 					{showPopup && (
-						<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-							<div className="bg-white p-8 rounded shadow-lg w-3/4">
-								<h2 className="text-2xl font-bold mb-4 text-center">Results</h2>
-								<p className="text-center">
-									Distance from actual location:{" "}
-									{submittedData?.distance?.toFixed(2) || "N/A"} meters
-								</p>
-								<p className="text-center">
-									Points: {submittedData?.score || 0}
-								</p>
-								<div className="flex justify-center">
-									<button
-										onClick={handleClosePopup} // Close the popup and go to next round or end game
-										className="mt-4 px-4 py-2 bg-n-5 text-white rounded hover:bg-blue-600"
-									>
-										{round === 5 ? "End Game" : "Next Round"}{" "}
-										{/* Change button text based on round */}
-									</button>
-								</div>
-							</div>
-						</div>
+						<ResultsPopup
+							distance={submittedData?.distance}
+							score={submittedData?.score}
+							round={round}
+							totalRounds={totalRounds}
+							onClose={handleClosePopup}
+							isGameOver={round === totalRounds}
+							onReport={handleImageReport} // Pass the handleImageReport function to the ResultsPopup component
+						/>
 					)}
 				</div>
-				<div className="w-full md:w-3/5 p-2 md:p-4 relative">
+				<div className="w-full md:w-1/2 p-1 md:pr-2 relative">
 					{/* handleCoordinatesSubmit function is passed as onCoordinatesSubmit to the Map component so it can be used in the component */}
 					<Map
 						ref={mapRef}
@@ -146,7 +150,7 @@ const Play = () => {
 						round={round}
 					/>
 				</div>
-			</div>
+			</main>
 			<Footer />
 		</div>
 	);

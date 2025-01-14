@@ -12,7 +12,7 @@ const Testimonial = () => {
 			name: "Logan Muhlen",
 			title: "Computer Engineering Student",
 			testimonial:
-				"I'm a fourth-year computer engineering student who loves doing personal projects, hackathons, and indoor soccer. This is my 3rd hackathon with this team and we are really excited with how this turned out.",
+				"I'm a fourth-year computer engineering student who loves doing personal projects, hackathons, and building this app. This is my 3rd hackathon with this team and we are really excited with how this turned out.",
 			linkedInUrl: "https://www.linkedin.com/in/logan-muhlen-54a53b131/",
 		},
 		{
@@ -50,7 +50,7 @@ const Testimonial = () => {
 	};
 
 	return (
-		<div id="meet-the-team" className="pb-12 px-4 bg-n-2">
+		<div id="meet-the-team" className="pt-10 pb-12 px-4 bg-n-2">
 			<div className="max-w-7xl mx-auto text-center">
 				{/* Title */}
 				<h2 className="text-2xl sm:text-3xl lg:text-4xl text-black font-semibold">
@@ -59,7 +59,7 @@ const Testimonial = () => {
 			</div>
 
 			{/* Grid of Testimonial Cards */}
-			<div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+			<div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 				{testimonials.map((testimonial, index) => (
 					// Animate each card
 					<motion.div

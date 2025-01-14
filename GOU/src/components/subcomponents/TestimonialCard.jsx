@@ -20,12 +20,14 @@ const TestimonialCard = ({
 					src={imageSrc}
 					alt={`${name}'s avatar`}
 				/>
+
 				<div className="flex flex-col justify-center">
 					<p className="text-sm sm:text-base font-semibold text-black">
 						{name}
 					</p>
-					<p className="text-md text-gray-500">{title}</p>
+					<p className="text-md text-n-6">{title}</p>
 				</div>
+
 				{/* LinkedIn icon aligned to the right */}
 				<a
 					href={linkedInUrl}
@@ -47,9 +49,7 @@ const TestimonialCard = ({
 
 			{/* Testimonial Text */}
 			<div className="p-4 md:p-6">
-				<p className="text-base italic md:text-lg text-gray-700">
-					{testimonial}
-				</p>
+				<p className="text-base italic md:text-lg">{testimonial}</p>
 			</div>
 		</div>
 	);

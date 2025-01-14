@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, session
 from flask_cors import CORS
 from google.cloud import storage
 import random
@@ -15,14 +15,21 @@ if credentialsPath and credentialsJSON:
     with open(credentialsPath, "w") as f:
         json.dump(json.loads(credentialsJSON), f)
 
-client = storage.Client.from_service_account_json(credentialsPath)
-# client = storage.Client.from_service_account_json("../GoogleCS.json")
+# client = storage.Client.from_service_account_json(credentialsPath)
+client = storage.Client.from_service_account_json("../GoogleCS.json")
 bucket = client.get_bucket("hackathongeoguesser")
 
 def getCoordsData():
     blob = bucket.blob("coordinates.json")
     blob.download_to_filename("coordinates.json")
     with open("coordinates.json") as f:
+        data = json.load(f)
+    return data
+
+def getDailyCoordsData():
+    blob = bucket.blob("daily_coordinates.json")
+    blob.download_to_filename("daily_coordinates.json")
+    with open("daily_coordinates.json") as f:
         data = json.load(f)
     return data
 
@@ -47,6 +54,14 @@ def getData():
         session.pop("currentIndex", None)
     
     return jsonify(selectedData)
+
+@app.route("/api/daily-data", methods=["GET"])
+def getDailyData():
+    if "dailyData" not in session or len(session["dailyData"]) == 0:
+        data = getDailyCoordsData()  # Load daily_coordinates.json data
+        session["dailyData"] = data  # Cache in session
+        
+    return jsonify(session["dailyData"])
 
 if __name__ == "__main__":
     app.run(debug=True)

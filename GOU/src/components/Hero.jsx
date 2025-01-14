@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion"; // For animations
 import backgroundImage from "../assets/University_Of_Cincinnati.jpg";
 
-const Hero = () => {
+const Hero = ({ handlePlayClick }) => {
 	return (
 		<div className="relative h-screen bg-cover bg-center flex items-center justify-center">
 			{/* Blurred background image */}
@@ -10,37 +10,49 @@ const Hero = () => {
 				className="absolute inset-0"
 				style={{
 					backgroundImage: `url(${backgroundImage})`,
-					filter: "blur(5px)", // Apply blur only to the background image
+					filter: "blur(6px)", // Apply blur to the background image
 					zIndex: -1, // Ensure it's behind other content
 					backgroundSize: "cover", // Ensure image covers entire area
 					backgroundPosition: "center", // Ensure image is centered
 				}}
 			/>
-			<div className="relative z-10 text-center px-6 py-16 sm:py-32 lg:py-48">
-				{/* Animate Welcome to Uni-Guesser to fade in on view */}
+			{/* Main Content */}
+			<div className="relative z-10 text-center px-6 py-16 sm:py-32 lg:py-48 max-w-3xl">
+				{/* Welcome Title */}
 				<motion.h1
-					className="text-5xl font-bold text-white tracking-wide"
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
+					className="text-5xl sm:text-6xl font-extrabold text-white tracking-wide mb-10"
+					initial={{ opacity: 0, y: -50 }}
+					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 1 }}
 				>
-					Welcome to Uni-Guesser!
+					Welcome to <br /><span className="text-white">Uni-Guesser!</span>
 				</motion.h1>
-				<p className="mt-4 text-xl sm:text-2xl font-semibold text-gray-200">
-					Test your knowledge of the University of Cincinnati’s campus!
-					<br /> Can you guess the location from just an image?
-					<br /> Challenge your friends and compete to get on the leaderboard!
-				</p>
-				<div className="mt-10 flex justify-center">
-					{/* Animate Play Now button to get bigger on hover */}
-					<motion.a
-						href="/play"
-						className="rounded-lg bg-n-6 px-6 py-3 text-lg font-semibold text-white shadow-md hover:bg-blue-600 transition duration-300 transform hover:scale-105"
-						whileHover={{ scale: 1.05 }}
+
+				{/* Description */}
+				<motion.p
+					className="text-lg sm:text-xl text-white leading-relaxed font-semibold"
+					initial={{ opacity: 0, y: 50 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 1, delay: 0.5 }}
+				>
+					Test your knowledge of the University of Cincinnati’s campus, try our daily challenge, and climb the leaderboard!
+				</motion.p>
+
+				{/* Play Now Button */}
+				<motion.div
+					className="mt-10 flex justify-center"
+					initial={{ opacity: 0, scale: 0.8 }}
+					animate={{ opacity: 1, scale: 1 }}
+					transition={{ duration: 0.8, delay: 1 }}
+				>
+					<motion.button
+						onClick={handlePlayClick}
+						className="rounded-lg px-8 py-4 bg-blue-500 text-white font-semibold text-xl shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transition transform hover:scale-105"
+						whileHover={{ scale: 1.1 }}
 					>
 						Play Now
-					</motion.a>
-				</div>
+					</motion.button>
+				</motion.div>
 			</div>
 		</div>
 	);

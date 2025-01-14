@@ -7,61 +7,47 @@ const Leaderboard = () => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const fetchLeaderboard = async () => {
+		let leaderboardChannel;
+		const fetchAndSubscribe = async () => {
 			try {
-				// Fetch leaderboard data from Supabase
-				const { data: leaderboardData, error: leaderboardError } =
-					await supabase
-						.from("leaderboard")
-						.select()
-						.order("score", { ascending: false })
-						.limit(10); // Top 10 players
+				// Fetch initial leaderboard data
+				const { data: leaderboardData, error } = await supabase
+					.from("leaderboard")
+					.select()
+					.order("score", { ascending: false })
+					.limit(10); // Top 10 players
 
-				if (leaderboardError) throw leaderboardError;
+				if (error) throw error;
 				setLeaderboard(leaderboardData);
 
 				// Realtime subscription
-				const leaderboardChannel = supabase
+				leaderboardChannel = supabase
 					.channel("leaderboard")
 					.on(
 						"postgres_changes",
-						{ event: "INSERT", schema: "public", table: "leaderboard" },
+						{ event: "*", schema: "public", table: "leaderboard" },
 						(payload) => {
+							console.log("Payload received:", payload);
 							setLeaderboard((prevLeaderboard) => {
-								const newLeaderboard = [...prevLeaderboard, payload.new];
-								newLeaderboard.sort((a, b) => b.score - a.score);
-								return newLeaderboard.slice(0, 10);
-							});
-						}
-					)
-					.on(
-						"postgres_changes",
-						{ event: "UPDATE", schema: "public", table: "leaderboard" },
-						(payload) => {
-							setLeaderboard((prevLeaderboard) => {
-								const updatedLeaderboard = prevLeaderboard.map((entry) =>
-									entry.id === payload.new.id ? payload.new : entry
-								);
+								let updatedLeaderboard = [...prevLeaderboard];
+								if (payload.eventType === "INSERT" && payload.new) {
+									updatedLeaderboard = [...updatedLeaderboard, payload.new];
+								} else if (payload.eventType === "UPDATE" && payload.new) {
+									updatedLeaderboard = updatedLeaderboard.map((entry) =>
+										entry.id === payload.new.id ? payload.new : entry
+									);
+								} else if (payload.eventType === "DELETE" && payload.old) {
+									updatedLeaderboard = updatedLeaderboard.filter(
+										(entry) => entry.id !== payload.old.id
+									);
+								}
+								// Sort and limit to top 10
 								updatedLeaderboard.sort((a, b) => b.score - a.score);
 								return updatedLeaderboard.slice(0, 10);
 							});
 						}
 					)
-					.on(
-						"postgres_changes",
-						{ event: "DELETE", schema: "public", table: "leaderboard" },
-						(payload) => {
-							setLeaderboard((prevLeaderboard) =>
-								prevLeaderboard.filter((entry) => entry.id !== payload.old.id)
-							);
-						}
-					)
 					.subscribe();
-
-				// Cleanup subscription
-				return () => {
-					supabase.removeChannel(leaderboardChannel);
-				};
 			} catch (error) {
 				console.error("Error fetching leaderboard data:", error.message);
 			} finally {
@@ -69,7 +55,13 @@ const Leaderboard = () => {
 			}
 		};
 
-		fetchLeaderboard();
+		fetchAndSubscribe();
+
+		return () => {
+			if (leaderboardChannel) {
+				supabase.removeChannel(leaderboardChannel);
+			}
+		};
 	}, []);
 
 	const containerVariants = {
@@ -82,78 +74,111 @@ const Leaderboard = () => {
 		},
 	};
 
+	// Animation variants
 	const itemVariants = {
-		hidden: { opacity: 0, y: 20 },
-		visible: { opacity: 1, y: 0 },
+		hidden: { opacity: 0, y: 50 },
+		visible: {
+			opacity: 1,
+			y: 0,
+			transition: {
+				duration: 1,
+				ease: "easeOut",
+			},
+		},
+	};
+
+	const getBackgroundColor = (index) => {
+		if (index === 0) return "bg-gradient-to-r from-orange-500 to-yellow-500";
+		if (index === 1) return "bg-gradient-to-r from-gray-600 to-gray-400";
+		if (index === 2) return "bg-gradient-to-r from-yellow-800 to-yellow-600";
+		return "bg-n-6";
+	};
+
+	const getBadge = (index) => {
+		if (index === 0) return "🥇";
+		if (index === 1) return "🥈";
+		if (index === 2) return "🥉";
+		return null;
 	};
 
 	return (
-		<section className="bg-n-2 py-12">
-			<div className="px-4 w-full max-w-4xl mx-auto">
-				<motion.div
-					initial="hidden"
-					animate="visible"
-					variants={containerVariants}
-					className="bg-n-5 text-white rounded-2xl shadow-lg p-6"
+		<div className="max-w-3xl mx-auto">
+			<motion.div
+				initial="hidden"
+				animate="visible"
+				variants={containerVariants}
+				className="bg-n-5 text-white rounded-2xl shadow-lg p-6 pb-3"
+			>
+				<motion.h2
+					className="text-4xl font-extrabold text-center mb-6"
+					variants={itemVariants}
 				>
-					<motion.h2
-						className="text-4xl font-extrabold text-center mb-2"
-						variants={itemVariants}
-					>
-						🏆 Leaderboard
-					</motion.h2>
-					<motion.p
-						className="text-lg text-center text-gray-200 mb-4"
-						variants={itemVariants}
-					>
-						Resets Weekly!
-					</motion.p>
-					{isLoading ? (
-						<motion.div
-							className="text-center text-gray-300"
-							variants={itemVariants}
-						>
-							Loading...
-						</motion.div>
-					) : (
-						<motion.ul
-							className="space-y-3"
-							variants={containerVariants}
-							initial="hidden"
-							animate="visible"
-						>
-							{leaderboard.map((entry, index) => (
-								<motion.li
-									key={entry.id}
-									className={`flex items-center justify-between p-3 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-										index === 0
-											? "bg-yellow-500"
-											: index === 1
-											? "bg-gray-400"
-											: index === 2
-											? "bg-yellow-800"
-											: "bg-n-6"
-									}`}
-									variants={itemVariants}
+					🏆 Leaderboard
+				</motion.h2>
+				{isLoading ? (
+					<motion.div className="text-center text-n-2" variants={itemVariants}>
+						Loading...
+					</motion.div>
+				) : leaderboard.length === 0 ? (
+					<div className="space-y-4">
+						<h2 className="text-center text-xl font-semibold text-n-2">
+							No scores yet. Play to be the first!
+						</h2>
+						<ul className="space-y-2">
+							{[...Array(3)].map((_, index) => (
+								<li
+									key={index}
+									className={`flex items-center justify-between p-2 rounded-lg animate-pulse bg-n-4 transform transition-transform hover:scale-105`}
 								>
 									<div className="flex items-center space-x-3">
-										<span className="text-lg font-bold w-8 text-center">
+										<span className="w-6 h-8 flex items-center justify-center rounded-full font-bold text-xl bg-gray-300 text-transparent">
 											{index + 1}
 										</span>
-										<span className="text-lg font-medium px-2">
-											{entry.name}
-										</span>
+										<span className="flex-grow ml-4 bg-gray-300 rounded-lg text-transparent h-4 w-24"></span>
 									</div>
-									<span className="text-lg font-bold">
-										{entry.score.toFixed(2)}
-									</span>
-								</motion.li>
+									<span className="w-16 bg-gray-300 rounded-lg text-transparent h-4"></span>
+								</li>
 							))}
-						</motion.ul>
-					)}
-				</motion.div>
-			</div>
-		</section>
+						</ul>
+					</div>
+				) : (
+					<motion.ul
+						className="space-y-3"
+						variants={containerVariants}
+						initial="hidden"
+						animate="visible"
+					>
+						{leaderboard.map((entry, index) => (
+							<motion.li
+								key={index}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 1.05 }}
+								className={`flex items-center justify-between p-2 sm:pl-3 rounded-lg shadow-md ${getBackgroundColor(
+									index
+								)}`}
+								variants={itemVariants}
+							>
+								<div className="flex items-center space-x-3 sm:space-x-6">
+									<span className="w-6 h-8 flex items-center justify-center rounded-full font-bold text-xl">
+										{getBadge(index) || index + 1}
+									</span>
+									<span className="text-lg font-semibold">{entry.name}</span>
+								</div>
+								<span className="text-lg font-semibold">
+									{entry.score.toFixed(2)}
+								</span>
+							</motion.li>
+						))}
+					</motion.ul>
+				)}
+				<motion.p
+					className="text-lg text-center text-n-2 mt-4 animate-pulse"
+					variants={itemVariants}
+				>
+					Resets Weekly
+				</motion.p>
+			</motion.div>
+		</div>
 	);
 };
 
