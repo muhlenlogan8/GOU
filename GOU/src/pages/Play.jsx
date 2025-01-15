@@ -6,6 +6,7 @@ import Map from "../components/Map";
 import ResultsPopup from "../components/ResultsPopup";
 import supabase from "../../supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorComponent from "../components/ErrorComponent";
 import Footer from "../components/Footer";
 
 const Play = () => {
@@ -50,15 +51,25 @@ const Play = () => {
 	if (loading) {
 		return <LoadingSpinner text="Preparing your game..." />;
 	} else if (error) {
-		return <div>Error: {error.message}</div>;
+		return <ErrorComponent text={error.message} />;
 	} else if (imagesData.length === 0) {
-		return <div>No images data available</div>;
+		return (
+			<div className="flex flex-col items-center justify-center h-screen w-screen bg-n-2">
+				<p className="mt-4 text-xl text-gray-700">No Image Data Avaliable</p>
+			</div>
+		);
 	}
 
 	// Handle the submission of coordinates and calculate the score
 	const handleCoordinatesSubmit = (data) => {
 		if (round > imagesData.length) {
-			return <div>Not enough images to continue the game</div>;
+			return (
+				<div className="flex flex-col items-center justify-center h-screen w-screen bg-n-2">
+					<p className="mt-4 text-xl text-gray-700">
+						Not enough images to continue the game
+					</p>
+				</div>
+			);
 		}
 
 		// Set the current point lat and long to the coordinates of the image for the current round

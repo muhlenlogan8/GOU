@@ -32,7 +32,7 @@ const GameOver = () => {
 	useEffect(() => {
 		const fetchLeaderboard = async () => {
 			try {
-				// Fetch leaderboard data
+				// Fetch leaderboard data from supabase table
 				const { data: leaderboardData, error: leaderboardError } =
 					await supabase
 						.from("leaderboard")
