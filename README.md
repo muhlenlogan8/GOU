@@ -1,5 +1,7 @@
 # Uni-Guesser
 
+Below is for the MakeUC Hackathon & the application has since been updated extensively
+
 Play Here: https://uni-guesser-two.vercel.app/
 
 ## Inspiration
