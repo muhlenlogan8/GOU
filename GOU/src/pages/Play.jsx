@@ -28,8 +28,8 @@ const Play = () => {
 
 	// Fetch images data from the backend
 	useEffect(() => {
-		// fetch(`${BACKEND_URL}/api/data`)
-		fetch("api/data")
+		fetch(`${BACKEND_URL}/api/data`)
+		// fetch("api/data")
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
