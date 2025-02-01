@@ -33,6 +33,7 @@ def getDailyCoordsData():
         data = json.load(f)
     return data
 
+# Quick play images & coordinates json GET route
 @app.route("/api/data", methods=["GET"])
 def getData():
     # Check if there already is an image list in the session
@@ -55,6 +56,7 @@ def getData():
     
     return jsonify(selectedData)
 
+# Daily play images & coordinates json GET route
 @app.route("/api/daily-data", methods=["GET"])
 def getDailyData():
     if "dailyData" not in session or len(session["dailyData"]) == 0:

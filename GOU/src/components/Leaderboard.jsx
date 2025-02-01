@@ -2,17 +2,21 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import supabase from "../../supabase";
 
-const Leaderboard = () => {
+const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 	const [leaderboard, setLeaderboard] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isDailyMode, setIsDailyMode] = useState(isDaily);
 
 	useEffect(() => {
 		let leaderboardChannel;
 		const fetchAndSubscribe = async () => {
 			try {
+				// Choose the correct leaderboard table
+				const tableName = isDailyMode ? "dailyLeaderboard" : "leaderboard";
+
 				// Fetch initial leaderboard data
 				const { data: leaderboardData, error } = await supabase
-					.from("leaderboard")
+					.from(tableName)
 					.select()
 					.order("score", { ascending: false })
 					.limit(10); // Top 10 players
@@ -22,10 +26,10 @@ const Leaderboard = () => {
 
 				// Realtime subscription
 				leaderboardChannel = supabase
-					.channel("leaderboard")
+					.channel(tableName)
 					.on(
 						"postgres_changes",
-						{ event: "*", schema: "public", table: "leaderboard" },
+						{ event: "*", schema: "public", table: tableName },
 						(payload) => {
 							console.log("Payload received:", payload);
 							setLeaderboard((prevLeaderboard) => {
@@ -62,7 +66,12 @@ const Leaderboard = () => {
 				supabase.removeChannel(leaderboardChannel);
 			}
 		};
-	}, []);
+	}, [isDailyMode]);
+
+	const toggleLeaderboard = () => {
+		setIsDailyMode((prev) => !prev);
+		setIsLoading(true);
+	};
 
 	const containerVariants = {
 		hidden: { opacity: 0 },
@@ -102,18 +111,27 @@ const Leaderboard = () => {
 	};
 
 	return (
-		<div className="max-w-3xl mx-auto">
+		<div className="max-w-3xl mx-auto relative">
 			<motion.div
 				initial="hidden"
 				animate="visible"
 				variants={containerVariants}
-				className="bg-n-5 text-white rounded-2xl shadow-lg p-6 pb-3"
+				className="bg-n-5 text-white rounded-2xl shadow-lg p-6 pb-3 relative"
 			>
+				{/* Toggle Button */}
+				{showToggle && (
+					<button
+						onClick={toggleLeaderboard}
+						className="absolute top-4 right-4 p-2 bg-white text-black rounded-lg shadow-md font-semibold hover:bg-gray-200 transition"
+					>
+						🔄
+					</button>
+				)}
 				<motion.h2
 					className="text-4xl font-extrabold text-center mb-6"
 					variants={itemVariants}
 				>
-					🏆 Leaderboard
+					🏆 {isDailyMode ? "Daily Challenge " : ""}Leaderboard
 				</motion.h2>
 				{isLoading ? (
 					<motion.div className="text-center text-n-2" variants={itemVariants}>

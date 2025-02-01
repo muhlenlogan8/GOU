@@ -11,7 +11,11 @@ import GameOverPopup from "../components/GameOverPopup";
 const GameOver = () => {
 	const navigate = useNavigate(); // Navigate to different pages
 	const location = useLocation(); // Access the current location and its state
-	const { score, gameId } = location.state || { score: 0, gameId: null }; // Get score and gameId from location state
+	const { isDaily, score, gameId } = location.state || {
+		isDaily: false,
+		score: 0,
+		gameId: null,
+	}; // Get score and gameId from location state
 	const roundedScore = score.toFixed(2);
 
 	const [leaderboard, setLeaderboard] = useState([]);
@@ -32,10 +36,13 @@ const GameOver = () => {
 	useEffect(() => {
 		const fetchLeaderboard = async () => {
 			try {
+				// Chose which leaderboard table to fetch
+				const tableName = isDaily ? "dailyLeaderboard" : "leaderboard";
+
 				// Fetch leaderboard data from supabase table
 				const { data: leaderboardData, error: leaderboardError } =
 					await supabase
-						.from("leaderboard")
+						.from(tableName)
 						.select()
 						.order("score", { ascending: false }) // Sort by score descending
 						.limit(10); // Limit to 10 results
@@ -46,7 +53,7 @@ const GameOver = () => {
 				// Check if the score for this gameId is already submitted
 				if (gameId) {
 					const { data: gameData, error: gameError } = await supabase
-						.from("leaderboard")
+						.from(tableName)
 						.select("gameId")
 						.eq("gameId", gameId)
 						.maybeSingle(); // Returns null if no data found
@@ -85,6 +92,9 @@ const GameOver = () => {
 		}
 
 		try {
+			// Chose which leaderboard table to insert into
+			const tableName = isDaily ? "dailyLeaderboard" : "leaderboard";
+
 			// Check if the score qualifies for the leaderboard
 			if (
 				leaderboard.length < 10 ||
@@ -92,7 +102,7 @@ const GameOver = () => {
 			) {
 				// Insert the new score with gameId
 				const { data, error } = await supabase
-					.from("leaderboard")
+					.from(tableName)
 					.insert([{ name, score, gameId }]);
 				if (error) throw error;
 
@@ -153,17 +163,21 @@ const GameOver = () => {
 					>
 						Home
 					</button>
-					<button
-						onClick={() => navigate("/quick-play")}
-						className="px-8 py-3 bg-green-500 text-white rounded-lg shadow-md font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all"
-					>
-						Play Again
-					</button>
+
+					{/* Hide Play Again button for Daily Play */}
+					{!isDaily && (
+						<button
+							onClick={() => navigate("/quick-play")}
+							className="px-8 py-3 bg-green-500 text-white rounded-lg shadow-md font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all"
+						>
+							Play Again
+						</button>
+					)}
 				</div>
 
 				{/* Leaderboard */}
 				<div className="p-6 w-full max-w-3xl">
-					<Leaderboard score={score} gameId={gameId} />
+					<Leaderboard isDaily={isDaily} />
 				</div>
 			</div>
 

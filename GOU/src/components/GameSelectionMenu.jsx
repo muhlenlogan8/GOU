@@ -1,17 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Card from "./subcomponents/GameCard";
 import dailyChallengeIcon from "../assets/daily-challenge.svg";
 import quickPlayIcon from "../assets/quick-play.svg";
-import { useEffect } from "react";
 
 const isMobileDevice = () =>
 	/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
 const GameSelectionMenu = ({ isVisible, onClose, onSelect }) => {
-	if (!isVisible) return null;
-
+	const [hasPlayedToday, setHasPlayedToday] = useState(false);
 	const isMobile = isMobileDevice();
+
+	useEffect(() => {
+		const lastPlayedDate = localStorage.getItem("dailyChallengePlayed");
+
+		// Get today's date
+		const today = new Date().toISOString().split("T")[0];
+
+		// Check if the last played date is today
+		if (lastPlayedDate === today) {
+			setHasPlayedToday(true);
+		}
+	}, []);
+
+	const handleDailyChallengeClick = () => {
+		if (hasPlayedToday) return; // Prevent click if already played
+
+		const today = new Date().toISOString().split("T")[0];
+
+		// Save today's date to local storage
+		localStorage.setItem("dailyChallengePlayed", today);
+		setHasPlayedToday(true);
+
+		onSelect("daily-challenge");
+	};
+
+	if (!isVisible) return null;
 
 	return (
 		<motion.div
@@ -46,20 +70,26 @@ const GameSelectionMenu = ({ isVisible, onClose, onSelect }) => {
 						isMobile={isMobile}
 					/>
 					{/* Daily Challenge Card */}
-					<Card
-						title="Daily Challenge"
-						description={
-							<>
-								Take on today's challenge and see how you rank on the daily
-								leaderboard! <br />
-								(Same format as quick play but you can only play once a day!)
-							</>
-						}
-						gradient="dynamic-bg-2"
-						svgIcon={dailyChallengeIcon}
-						onClick={() => onSelect("daily-challenge")}
-						isMobile={isMobile}
-					/>
+					<div className="relative">
+						<Card
+							title="Daily Challenge"
+							description="Take on today's challenge and see how you rank on the daily leaderboard!"
+							gradient="dynamic-bg-2"
+							svgIcon={dailyChallengeIcon}
+							onClick={hasPlayedToday ? null : handleDailyChallengeClick}
+							isMobile={isMobile}
+							className={`transition-opacity ${
+								hasPlayedToday ? "opacity-50 grayscale pointer-events-none" : ""
+							}`}
+						/>
+
+						{/* Overlay message when already played */}
+						{hasPlayedToday && (
+							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+								<p className="text-white text-lg font-bold">Already Played  Today</p>
+							</div>
+						)}
+					</div>
 				</div>
 				{/* Close Button */}
 				<button

@@ -37,7 +37,7 @@ const LandingPage = () => {
 			<HomeHeader handlePlayClick={handlePlayClick} />
 			<Hero handlePlayClick={handlePlayClick} />
 			<div className="pt-12 px-4 bg-n-2">
-				<Leaderboard />
+				<Leaderboard showToggle={true} />
 			</div>
 			{/* <Mission /> */}
 			<Testimonial />

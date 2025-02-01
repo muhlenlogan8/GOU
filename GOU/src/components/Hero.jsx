@@ -23,7 +23,7 @@ const Hero = ({ handlePlayClick }) => {
 					className="text-5xl sm:text-6xl font-extrabold text-white tracking-wide mb-10"
 					initial={{ opacity: 0, y: -50 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 1 }}
+					transition={{ duration: 0.5 }}
 				>
 					Welcome to <br /><span className="text-white">Uni-Guesser!</span>
 				</motion.h1>
@@ -33,7 +33,7 @@ const Hero = ({ handlePlayClick }) => {
 					className="text-lg sm:text-xl text-white leading-relaxed font-semibold"
 					initial={{ opacity: 0, y: 50 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 1, delay: 0.5 }}
+					transition={{ duration: 0.5, delay: 0.5 }}
 				>
 					Test your knowledge of the University of Cincinnati’s campus, try our daily challenge, and climb the leaderboard!
 				</motion.p>
