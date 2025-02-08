@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import logo from "../assets/UniGuesser_Logo.png";
-import Banner from "./Banner";
 
-const Header = ({ handlePlayClick, openFeedbackPopup }) => {
+const Header = ({ handlePlayClick }) => {
 	const [textColor, setTextColor] = useState("rgb(255, 255, 255)");
 
+	// Change text color based on scroll position
 	useEffect(() => {
 		const handleScroll = () => {
 			const scrollTop = window.scrollY;
@@ -26,6 +26,22 @@ const Header = ({ handlePlayClick, openFeedbackPopup }) => {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	// Smooth scroll to anchor links and add offset
+	const handleAnchorClick = (e, targetId) => {
+		e.preventDefault();
+		const targetElement = document.getElementById(targetId);
+		if (targetElement) {
+			const headerOffset = 80;
+			const elementPosition = targetElement.getBoundingClientRect().top;
+			const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+			window.scrollTo({
+				top: offsetPosition,
+				behavior: "smooth",
+			});
+		}
+	};
+
 	return (
 		<header
 			className="fixed top-0 left-0 right-0 backdrop-blur-2xl border-b border-gray-300 bg-transparent z-20"
@@ -42,16 +58,34 @@ const Header = ({ handlePlayClick, openFeedbackPopup }) => {
 					</a>
 				</div>
 
+				{/* Links for larger screens */}
+				<div className="hidden md:flex flex-1 justify-center gap-x-12">
+					<a
+						href="#our-mission"
+						onClick={(e) => handleAnchorClick(e, "our-mission")}
+						className="text-xl font-semibold leading-6 hover:text-n-5 hover:underline"
+					>
+						Our Mission
+					</a>
+					<a
+						href="#meet-the-team"
+						onClick={(e) => handleAnchorClick(e, "meet-the-team")}
+						className="text-xl font-semibold leading-6 hover:text-n-5 hover:underline"
+					>
+						Meet the Team
+					</a>
+				</div>
+
+				{/* Play Game button - always visible */}
 				<div className="flex items-center justify-end flex-1 md:flex-none">
 					<button
 						onClick={handlePlayClick}
-						className="text-2xl font-semibold leading-6 hover:text-n-5 hover:underline"
+						className="text-xl font-semibold leading-6 hover:text-n-5 hover:underline"
 					>
 						Play Game
 					</button>
 				</div>
 			</nav>
-			<Banner openFeedbackPopup={openFeedbackPopup} />
 		</header>
 	);
 };

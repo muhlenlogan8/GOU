@@ -6,6 +6,20 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 	const [leaderboard, setLeaderboard] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isDailyMode, setIsDailyMode] = useState(isDaily);
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const checkIfMobile = () => {
+			setIsMobile(window.innerWidth <= 768);
+		};
+
+		checkIfMobile();
+		window.addEventListener("resize", checkIfMobile);
+
+		return () => {
+			window.removeEventListener("resize", checkIfMobile);
+		};
+	}, []);
 
 	useEffect(() => {
 		let leaderboardChannel;
@@ -128,10 +142,10 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 					</button>
 				)}
 				<motion.h2
-					className="text-4xl font-extrabold text-center mb-6"
+					className="text-2xl md:text-4xl font-extrabold text-center mb-6"
 					variants={itemVariants}
 				>
-					🏆 {isDailyMode ? "Daily Challenge " : ""}Leaderboard
+					🏆 {isDailyMode ? "Daily Challenge " : "Quick Play "}
 				</motion.h2>
 				{isLoading ? (
 					<motion.div className="text-center text-n-2" variants={itemVariants}>
@@ -139,7 +153,7 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 					</motion.div>
 				) : leaderboard.length === 0 ? (
 					<div className="space-y-4">
-						<h2 className="text-center text-xl font-semibold text-n-2">
+						<h2 className="text-center text-lg md:text-xl font-semibold text-n-2">
 							No scores yet. Play to be the first!
 						</h2>
 						<ul className="space-y-2">
@@ -193,7 +207,7 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 					className="text-lg text-center text-n-2 mt-4 animate-pulse"
 					variants={itemVariants}
 				>
-					Resets Weekly
+					Resets{isDailyMode ? " Daily" : " Weekly"}
 				</motion.p>
 			</motion.div>
 		</div>
