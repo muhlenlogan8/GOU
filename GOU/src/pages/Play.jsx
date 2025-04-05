@@ -26,6 +26,14 @@ const Play = () => {
 	const totalRounds = 5;
 	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // From Vercel environment variables
 
+	// Redirect to Home.jsx if the page is refreshed
+	useEffect(() => {
+		const [navEntry] = performance.getEntriesByType("navigation");
+		if (navEntry && navEntry.type === "reload") {
+			navigate("/");
+		}
+	}, [navigate]);
+
 	// Fetch images data from the backend
 	useEffect(() => {
 		fetch(`${BACKEND_URL}/api/data`)
@@ -121,7 +129,9 @@ const Play = () => {
 		} else {
 			// Else if all rounds are completed, navigate to game over page
 			const finalScore = imageContainerRef.current.getScore();
-			navigate("/game-over", { state: { isDaily: false, score: finalScore, gameId } }); // Pass the final score and game ID to the Game Over page
+			navigate("/game-over", {
+				state: { isDaily: false, score: finalScore, gameId },
+			}); // Pass the final score and game ID to the Game Over page
 		}
 
 		// Reset the map and image container for the next round (.current is used to access the current instance of the ref)

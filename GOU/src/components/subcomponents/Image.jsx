@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import fullscreenIcon from "../../assets/fullscreen-icon.svg";
 import magnifierIcon from "../../assets/magnifier-icon.svg";
 import magnifierCloseIcon from "../../assets/magnifier-close-icon.svg";
 
 const Image = ({
 	src,
 	alt,
-	magnifierHeight = 200,
-	magnifierWidth = 200,
+	magnifierHeight = 180,
+	magnifierWidth = 180,
 	windowWidth,
 }) => {
 	const [showMagnifier, setShowMagnifier] = useState(false);
@@ -15,19 +14,8 @@ const Image = ({
 	const [[imgWidth, imgHeight], setSize] = useState([0, 0]);
 	const [[x, y], setXY] = useState([0, 0]);
 	const [zoomLevel, setZoomLevel] = useState(1.5);
-	const [isExpanded, setIsExpanded] = useState(false);
-	const [isSmallScreen, setIsSmallScreen] = useState(false);
 	const containerRef = useRef(null);
 	const isDraggingRef = useRef(false);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsSmallScreen(window.innerWidth < 768 && !isMobileDevice());
-		};
-		handleResize();
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
 
 	useEffect(() => {
 		const disableScroll = (e) => {
@@ -88,10 +76,6 @@ const Image = ({
 		setShowMagnifier(true);
 	};
 
-	const toggleExpand = () => {
-		setIsExpanded(!isExpanded);
-	};
-
 	const handleZoomChange = (e) => {
 		setZoomLevel(parseFloat(e.target.value));
 		if (magnifierEnabled) setShowMagnifier(true);
@@ -104,26 +88,9 @@ const Image = ({
 
 	return (
 		<div
-			className={`relative flex items-center justify-center ${
-				isSmallScreen && !isExpanded ? "h-[45vh]" : "w-full h-full"
-			} transition-all duration-300`}
+			className="relative flex items-center justify-center w-full h-full transition-all duration-300"
 			ref={containerRef}
 		>
-			{/* Expand Button */}
-			{isSmallScreen && (
-				<button
-					onClick={toggleExpand}
-					className={`absolute top-2 right-2 z-10 flex items-center justify-end px-2 py-2 bg-n-2 rounded-full shadow-md group hover:w-auto ${
-						isExpanded ? "bg-opacity-100" : "bg-opacity-70"
-					}`}
-				>
-					<img src={fullscreenIcon} alt="Expand Icon" className="w-8 h-8" />
-					<span className="ml-2 hidden group-hover:inline-block text-md text-black font-bold">
-						{isExpanded ? "Collapse" : "Expand"}
-					</span>
-				</button>
-			)}
-
 			{/* Magnifier Toggle Button */}
 			<button
 				onClick={toggleMagnifier}
@@ -134,7 +101,7 @@ const Image = ({
 				<img
 					src={magnifierEnabled ? magnifierCloseIcon : magnifierIcon}
 					alt="Magnifier Icon"
-					className="w-8 h-8"
+					className="w-7 h-7"
 				/>
 				<span className="ml-2 hidden group-hover:inline-block text-md text-black font-bold">
 					{magnifierEnabled ? "Disable Magnifier" : "Enable Magnifier"}

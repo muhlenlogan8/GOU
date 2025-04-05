@@ -8,6 +8,7 @@ import supabase from "../../supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorComponent from "../components/ErrorComponent";
 import Footer from "../components/Footer";
+import AlreadyPlayedToday from "../components/AlreadyPlayedToday";
 
 const DailyPlay = () => {
 	const [showPopup, setShowPopup] = useState(false);
@@ -16,7 +17,7 @@ const DailyPlay = () => {
 	const [imagesData, setImagesData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const [gameId, setGameId] = useState(uuidv4()); // Generate a unique game ID
+	const [hasPlayedToday, setHasPlayedToday] = useState(false);
 	const navigate = useNavigate();
 
 	// useRef to access the ImageContainer and Map components directly (For updating score and resetting map)
@@ -26,8 +27,30 @@ const DailyPlay = () => {
 	const totalRounds = 5;
 	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // From Vercel environment variables
 
-	// Fetch images data from the backend
+	// Redirect to Home.jsx if the page is refreshed
 	useEffect(() => {
+		const [navEntry] = performance.getEntriesByType("navigation");
+		if (navEntry && navEntry.type === "reload") {
+			navigate("/");
+		}
+	}, [navigate]);
+
+	// Check if the user has already played today's challenge
+	useEffect(() => {
+		const lastPlayedDate = localStorage.getItem("dailyChallengePlayed");
+		const today = new Date().toISOString().split("T")[0];
+
+		if (lastPlayedDate === today) {
+			setHasPlayedToday(true);
+			setLoading(false);
+		} else {
+			// Only fetch data if the user hasn't completed today's challenge
+			fetchDailyData();
+		}
+	}, []);
+
+	// Fetch images data from the backend
+	const fetchDailyData = () => {
 		fetch(`${BACKEND_URL}/api/daily-data`)
 		// fetch("api/daily-data")
 			.then((response) => {
@@ -45,17 +68,19 @@ const DailyPlay = () => {
 				setError(error);
 				setLoading(false);
 			});
-	}, []); // , [] means this effect will run only once after the initial render
+	};
 
-	// Check for loading, error, or no data and return appropriate messages if so
+	// Check for loading, error, already played, or no data and return appropriate messages if so
 	if (loading) {
 		return <LoadingSpinner text="Preparing your game..." />;
+	} else if (hasPlayedToday) {
+		return <AlreadyPlayedToday />;
 	} else if (error) {
 		return <ErrorComponent text={error.message} />;
 	} else if (imagesData.length === 0) {
 		return (
 			<div className="flex flex-col items-center justify-center h-screen w-screen bg-n-2">
-				<p className="mt-4 text-xl text-gray-700">No Image Data Avaliable</p>
+				<p className="mt-4 text-xl text-gray-700">No Image Data Available</p>
 			</div>
 		);
 	}
@@ -121,7 +146,14 @@ const DailyPlay = () => {
 		} else {
 			// Else if all rounds are completed, navigate to game over page
 			const finalScore = imageContainerRef.current.getScore();
-			navigate("/game-over", { state: { isDaily: true, score: finalScore, gameId } }); // Pass the final score and game ID to the Game Over page
+
+			// Mark that the user has COMPLETED today's challenge (not just played)
+			const today = new Date().toISOString().split("T")[0];
+			localStorage.setItem("dailyChallengeCompleted", today);
+
+			navigate("/game-over", {
+				state: { isDaily: true, score: finalScore, gameId },
+			}); // Pass the final score and game ID to the Game Over page
 		}
 
 		// Reset the map and image container for the next round (.current is used to access the current instance of the ref)
@@ -138,6 +170,7 @@ const DailyPlay = () => {
 						ref={imageContainerRef} // Allows direct access to the ImageContainer component
 						round={round}
 						imagesData={imagesData} // Pass the images data to the ImageContainer component
+						title="Daily Challenge"
 					/>
 					{/* Conditionally render results popup if showPopup calls for it */}
 					{showPopup && (

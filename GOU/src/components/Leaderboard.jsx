@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import supabase from "../../supabase";
 
 const Leaderboard = ({ isDaily = false, showToggle = false }) => {
@@ -87,128 +87,198 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 		setIsLoading(true);
 	};
 
-	const containerVariants = {
-		hidden: { opacity: 0 },
-		visible: {
-			opacity: 1,
-			transition: {
-				staggerChildren: 0.2,
-			},
-		},
-	};
-
-	// Animation variants
-	const itemVariants = {
-		hidden: { opacity: 0, y: 50 },
-		visible: {
-			opacity: 1,
-			y: 0,
-			transition: {
-				duration: 1,
-				ease: "easeOut",
-			},
-		},
-	};
-
-	const getBackgroundColor = (index) => {
-		if (index === 0) return "bg-gradient-to-r from-orange-500 to-yellow-500";
-		if (index === 1) return "bg-gradient-to-r from-gray-600 to-gray-400";
-		if (index === 2) return "bg-gradient-to-r from-yellow-800 to-yellow-600";
-		return "bg-n-6";
-	};
-
-	const getBadge = (index) => {
-		if (index === 0) return "🥇";
-		if (index === 1) return "🥈";
-		if (index === 2) return "🥉";
-		return null;
-	};
-
 	return (
-		<div className="max-w-3xl mx-auto relative">
+		<div className="max-w-3xl w-full mx-auto">
 			<motion.div
-				initial="hidden"
-				animate="visible"
-				variants={containerVariants}
-				className="bg-n-5 text-white rounded-2xl shadow-lg p-6 pb-3 relative"
+				className="relative bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200"
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.6 }}
 			>
-				{/* Toggle Button */}
-				{showToggle && (
-					<button
-						onClick={toggleLeaderboard}
-						className="absolute top-4 right-4 p-2 bg-white text-black rounded-lg shadow-md font-semibold hover:bg-gray-200 transition"
-					>
-						🔄
-					</button>
-				)}
-				<motion.h2
-					className="text-2xl md:text-4xl font-extrabold text-center mb-6"
-					variants={itemVariants}
-				>
-					🏆 {isDailyMode ? "Daily Challenge " : "Quick Play "}
-				</motion.h2>
-				{isLoading ? (
-					<motion.div className="text-center text-n-2" variants={itemVariants}>
-						Loading...
-					</motion.div>
-				) : leaderboard.length === 0 ? (
-					<div className="space-y-4">
-						<h2 className="text-center text-lg md:text-xl font-semibold text-n-2">
-							No scores yet. Play to be the first!
-						</h2>
-						<ul className="space-y-2">
-							{[...Array(3)].map((_, index) => (
-								<li
-									key={index}
-									className={`flex items-center justify-between p-2 rounded-lg animate-pulse bg-n-4 transform transition-transform hover:scale-105`}
-								>
-									<div className="flex items-center space-x-3">
-										<span className="w-6 h-8 flex items-center justify-center rounded-full font-bold text-xl bg-gray-300 text-transparent">
-											{index + 1}
-										</span>
-										<span className="flex-grow ml-4 bg-gray-300 rounded-lg text-transparent h-4 w-24"></span>
-									</div>
-									<span className="w-16 bg-gray-300 rounded-lg text-transparent h-4"></span>
-								</li>
-							))}
-						</ul>
-					</div>
-				) : (
-					<motion.ul
-						className="space-y-3"
-						variants={containerVariants}
-						initial="hidden"
-						animate="visible"
-					>
-						{leaderboard.map((entry, index) => (
-							<motion.li
-								key={index}
+				{/* Header gradient bar */}
+				<div className="h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+
+				<div className="px-6 py-5 relative">
+					<div className="flex justify-between items-center mb-6">
+						<motion.div
+							initial={{ opacity: 0, x: -20 }}
+							animate={{ opacity: 1, x: 0 }}
+							className="flex items-center"
+						>
+							<span className="text-2xl mr-2">🏆</span>
+							<h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+								{isDailyMode ? "Daily Challenge" : "Quick Play"}
+							</h2>
+						</motion.div>
+
+						{showToggle && (
+							<motion.button
+								initial={{ opacity: 0, scale: 0.8 }}
+								animate={{ opacity: 1, scale: 1 }}
 								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 1.05 }}
-								className={`flex items-center justify-between p-2 sm:pl-3 rounded-lg shadow-md ${getBackgroundColor(
-									index
-								)}`}
-								variants={itemVariants}
+								whileTap={{ scale: 0.95 }}
+								onClick={toggleLeaderboard}
+								className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg shadow-md transition-all"
+								aria-label={
+									isDailyMode
+										? "Switch to Quick Play"
+										: "Switch to Daily Challenge"
+								}
 							>
-								<div className="flex items-center space-x-3 sm:space-x-6">
-									<span className="w-6 h-8 flex items-center justify-center rounded-full font-bold text-xl">
-										{getBadge(index) || index + 1}
-									</span>
-									<span className="text-lg font-semibold">{entry.name}</span>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="h-5 w-5"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+									/>
+								</svg>
+							</motion.button>
+						)}
+					</div>
+
+					<AnimatePresence mode="wait">
+						{isLoading ? (
+							<motion.div
+								key="loading"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								className="flex justify-center items-center py-16"
+							>
+								<div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+							</motion.div>
+						) : leaderboard.length === 0 ? (
+							<motion.div
+								key="empty"
+								initial={{ opacity: 0, scale: 0.9 }}
+								animate={{ opacity: 1, scale: 1 }}
+								exit={{ opacity: 0, scale: 0.9 }}
+								transition={{ duration: 0.4 }}
+								className="text-center py-12 px-4"
+							>
+								<div className="inline-flex rounded-full bg-blue-100 p-6 mb-4">
+									<svg
+										className="w-8 h-8 text-blue-600"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+										/>
+									</svg>
 								</div>
-								<span className="text-lg font-semibold">
-									{entry.score.toFixed(2)}
-								</span>
-							</motion.li>
-						))}
-					</motion.ul>
-				)}
-				<motion.p
-					className="text-lg text-center text-n-2 mt-4 animate-pulse"
-					variants={itemVariants}
-				>
-					Resets{isDailyMode ? " Daily" : " Weekly"}
-				</motion.p>
+								<h3 className="mt-4 text-lg font-medium text-gray-800">
+									No Scores Yet
+								</h3>
+								<p className="mt-1 text-gray-500">
+									Be the first to claim your place on the leaderboard!
+								</p>
+							</motion.div>
+						) : (
+							<motion.div
+								key="leaderboard"
+								initial="hidden"
+								animate="visible"
+								variants={{
+									hidden: { opacity: 0 },
+									visible: {
+										opacity: 1,
+										transition: { staggerChildren: 0.07 },
+									},
+								}}
+								className="space-y-3"
+							>
+								{leaderboard.map((entry, index) => (
+									<motion.div
+										key={entry.id || index}
+										variants={{
+											hidden: { opacity: 0, y: 10 },
+											visible: { opacity: 1, y: 0 },
+										}}
+										whileHover={{ scale: 1.02 }}
+										className={`flex items-center p-3 rounded-lg ${
+											index === 0
+												? "bg-yellow-400 border border-yellow-500"
+												: index === 1
+												? "bg-gray-300 border border-gray-400"
+												: index === 2
+												? "bg-amber-600 border border-amber-700"
+												: "bg-gray-100 border border-gray-200"
+										} shadow-md`}
+									>
+										<div
+											className={`w-8 h-8 flex items-center justify-center rounded-full mr-3 shadow-md ${
+												index === 0
+													? "bg-yellow-600 text-white"
+													: index === 1
+													? "bg-gray-600 text-white"
+													: index === 2
+													? "bg-amber-800 text-white"
+													: "bg-gray-400 text-white"
+											} font-bold text-sm`}
+										>
+											{index === 0
+												? "🥇"
+												: index === 1
+												? "🥈"
+												: index === 2
+												? "🥉"
+												: index + 1}
+										</div>
+										<div className="ml-1 flex-1">
+											<div
+												className={`font-bold ${
+													index === 0
+														? "text-yellow-900"
+														: index === 1
+														? "text-gray-800"
+														: index === 2
+														? "text-amber-900"
+														: "text-gray-600"
+												}`}
+											>
+												{entry.name}
+											</div>
+										</div>
+										<div
+											className={`px-4 py-1 rounded-full shadow-md ${
+												index === 0
+													? "bg-yellow-600 text-white"
+													: index === 1
+													? "bg-gray-600 text-white"
+													: index === 2
+													? "bg-amber-800 text-white"
+													: "bg-gray-500 text-white"
+											} font-mono text-sm font-medium`}
+										>
+											{entry.score.toFixed(2)}
+										</div>
+									</motion.div>
+								))}
+							</motion.div>
+						)}
+					</AnimatePresence>
+
+					<div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
+						<div className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full shadow-md">
+							Resets {isDailyMode ? "Daily" : "Weekly"}
+						</div>
+						<div className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full shadow-md">
+							Players: {leaderboard.length}
+						</div>
+					</div>
+				</div>
 			</motion.div>
 		</div>
 	);

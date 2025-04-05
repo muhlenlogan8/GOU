@@ -7,70 +7,90 @@ const ResultsPopup = ({
 	totalRounds,
 	onClose,
 	isGameOver,
-	onReport, // New prop for reporting issues
+	onReport,
 }) => {
-	const [hasReported, setHasReported] = useState(false); // Track if image has been reported by user
+	const [hasReported, setHasReported] = useState(false);
 
-	// Function to handle reporting an issue with the image
 	const handleReportClick = () => {
-		setHasReported(true); // Set hasReported to true
-		onReport(); // Call onReport function passed as prop
+		setHasReported(true);
+		onReport();
 	};
 
 	return (
-		<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+		<div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10 p-4">
 			<div
-				className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-2xl w-11/12 max-w-md animate-fadeIn"
+				className="bg-white rounded-2xl w-11/12 max-w-md animate-fadeIn overflow-hidden"
 				style={{
-					background: "linear-gradient(135deg, #fdfbfb, #ebedee)",
-					border: "1px solid #ddd",
+					background: "linear-gradient(145deg, #f8faff, #f0f4fa)",
 				}}
 			>
-				<h2 className="text-3xl font-extrabold mb-3 sm:mb-6 text-center text-black">
-					{isGameOver ? "Game Over!" : "Round Results"}
-				</h2>
-
-				<div className="flex flex-col items-center space-y-2 sm:space-y-4">
-					<div className="text-lg font-medium">
-						<span className="text-n-6">Distance:</span>{" "}
-						<span className="text-blue-500">
-							{distance?.toFixed(2) || "N/A"}m
-						</span>
-					</div>
-					<div className="text-lg font-medium">
-						<span className="text-n-6">Points:</span>{" "}
-						<span className="text-green-600 font-bold">{score}</span>
-					</div>
-					<div className="text-sm text-n-6">
-						Round {round} of {totalRounds}
-					</div>
+				{/* Header */}
+				<div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 sm:p-6">
+					<h2 className="text-2xl sm:text-3xl font-bold text-center text-white">
+						{isGameOver ? "Game Over!" : "Round Results"}
+					</h2>
 				</div>
 
-				{/* Divider */}
-				<div className="my-3 sm:my-6 border-t border-gray-300"></div>
+				<div className="p-4 sm:p-6">
+					{/* Stats cards */}
+					<div className="grid grid-cols-2 gap-3 mb-4 sm:mb-5">
+						<div className="bg-blue-50 p-3 rounded-xl text-center border border-blue-100 shadow-sm">
+							<div className="text-sm text-blue-800 font-medium mb-1">
+								Distance
+							</div>
+							<div className="text-xl sm:text-2xl font-bold text-blue-600">
+								{distance?.toFixed(2) || "N/A"}m
+							</div>
+						</div>
+						<div className="bg-green-50 p-3 rounded-xl text-center border border-green-100 shadow-sm">
+							<div className="text-sm text-green-800 font-medium mb-1">
+								Points
+							</div>
+							<div className="text-xl sm:text-2xl font-bold text-green-600">
+								{score}
+							</div>
+						</div>
+					</div>
 
-				{/* Button */}
-				<div className="flex flex-col items-center space-y-3">
-					<button
-						onClick={onClose}
-						className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
-					>
-						{isGameOver ? "See Final Score" : "Next Round"}
-					</button>
+					{/* Progress indicator */}
+					<div className="mb-5">
+						<div className="flex justify-between text-sm text-gray-600 font-medium mb-1">
+							<span>Progress</span>
+							<span>
+								Round {round} of {totalRounds}
+							</span>
+						</div>
+						<div className="w-full bg-gray-200 rounded-full h-2.5">
+							<div
+								className="bg-blue-600 h-2.5 rounded-full"
+								style={{ width: `${(round / totalRounds) * 100}%` }}
+							></div>
+						</div>
+					</div>
 
-					{/* Report Issue Button */}
-					{hasReported ? (
-						<p className="text-sm text-green-600 font-semibold animate-pulse">
-							The image has been reported. Thank you!
-						</p>
-					) : (
+					{/* Buttons */}
+					<div className="flex flex-col items-center space-y-3">
 						<button
-							onClick={handleReportClick}
-							className="text-xs sm:text-sm text-red-500 hover:underline focus:outline-none pt-2"
+							onClick={onClose}
+							className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all shadow-md"
 						>
-							Problem with this image or its coordinates? Click here!
+							{isGameOver ? "See Final Score" : "Next Round"}
 						</button>
-					)}
+
+						{/* Report Issue Button */}
+						{hasReported ? (
+							<p className="text-sm text-green-600 font-medium animate-pulse">
+								Image reported. Thank you!
+							</p>
+						) : (
+							<button
+								onClick={handleReportClick}
+								className="text-xs sm:text-sm text-red-500 hover:underline focus:outline-none"
+							>
+								Report issue with image or coordinates
+							</button>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

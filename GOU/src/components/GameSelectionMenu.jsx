@@ -73,20 +73,23 @@ const GameSelectionMenu = ({ isVisible, onClose, onSelect }) => {
 					<div className="relative">
 						<Card
 							title="Daily Challenge"
-							description="Take on today's challenge and see how you rank on the daily leaderboard!"
+							description="Take on today's challenge and try to rank on the daily leaderboard!"
 							gradient="dynamic-bg-2"
 							svgIcon={dailyChallengeIcon}
 							onClick={hasPlayedToday ? null : handleDailyChallengeClick}
 							isMobile={isMobile}
-							className={`transition-opacity ${
-								hasPlayedToday ? "opacity-50 grayscale pointer-events-none" : ""
-							}`}
+							className={hasPlayedToday ? "pointer-events-none" : ""}
+							disableAnimation={hasPlayedToday}
 						/>
 
 						{/* Overlay message when already played */}
 						{hasPlayedToday && (
-							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
-								<p className="text-white text-lg font-bold">Already Played  Today</p>
+							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg backdrop-brightness-[0.85]">
+								<div className="py-2 px-4 rounded-lg shadow-lg">
+									<p className="text-white text-lg font-bold">
+										Already Played Today
+									</p>
+								</div>
 							</div>
 						)}
 					</div>

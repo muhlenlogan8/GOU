@@ -7,29 +7,30 @@ import leoProfanity from "leo-profanity";
 import ConfettiWrapper from "../components/ConfettiWrapper";
 import Leaderboard from "../components/Leaderboard";
 import GameOverPopup from "../components/GameOverPopup";
+import { motion } from "framer-motion";
 
 const GameOver = () => {
-	const navigate = useNavigate(); // Navigate to different pages
-	const location = useLocation(); // Access the current location and its state
+	const navigate = useNavigate();
+	const location = useLocation();
 	const { isDaily, score, gameId } = location.state || {
 		isDaily: false,
 		score: 0,
 		gameId: null,
-	}; // Get score and gameId from location state
+	};
 	const roundedScore = score.toFixed(2);
 
 	const [leaderboard, setLeaderboard] = useState([]);
 	const [name, setName] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
-	const [isGameSubmitted, setIsGameSubmitted] = useState(false); // Track if the game is already submitted
+	const [isGameSubmitted, setIsGameSubmitted] = useState(false);
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 
-	const { width, height } = useWindowSize(); // Get the window size for confetti
+	const { width, height } = useWindowSize();
 
 	// Initialize profanity filter
 	useEffect(() => {
-		leoProfanity.loadDictionary(); // Load default dictionary
+		leoProfanity.loadDictionary();
 	}, []);
 
 	// Fetch leaderboard data from supabase and check for existing gameId submission
@@ -44,8 +45,8 @@ const GameOver = () => {
 					await supabase
 						.from(tableName)
 						.select()
-						.order("score", { ascending: false }) // Sort by score descending
-						.limit(10); // Limit to 10 results
+						.order("score", { ascending: false })
+						.limit(10);
 
 				if (leaderboardError) throw leaderboardError;
 				setLeaderboard(leaderboardData);
@@ -56,21 +57,21 @@ const GameOver = () => {
 						.from(tableName)
 						.select("gameId")
 						.eq("gameId", gameId)
-						.maybeSingle(); // Returns null if no data found
+						.maybeSingle();
 
 					if (gameError) throw gameError;
-					if (gameData) setIsGameSubmitted(true); // Set the flag if gameId is found meaning the game is already submitted in database
+					if (gameData) setIsGameSubmitted(true);
 				}
 			} catch (error) {
 				console.error("Error fetching leaderboard data:", error.message);
 			} finally {
-				setIsLoading(false); // Set loading to false once gameId has been checked
+				setIsLoading(false);
 			}
 		};
 		fetchLeaderboard();
-	}, []); // Empty array ensures this runs only once on mount
+	}, []);
 
-	const handleNameChange = (e) => setName(e.target.value); // Update the name state on input change
+	const handleNameChange = (e) => setName(e.target.value);
 
 	const handleSubmit = async () => {
 		if (!name.trim()) {
@@ -106,7 +107,7 @@ const GameOver = () => {
 					.insert([{ name, score, gameId }]);
 				if (error) throw error;
 
-				setIsSubmitted(true); // Set the submission flag
+				setIsSubmitted(true);
 			} else {
 				setError("Your score did not make the top 10");
 			}
@@ -117,8 +118,14 @@ const GameOver = () => {
 	};
 
 	return (
-		<div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300">
-			{/* Confetti */}
+		<div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
+			{/* Decorative elements */}
+			<div className="absolute inset-0 overflow-hidden pointer-events-none">
+				<div className="absolute top-0 -right-1/4 w-1/2 h-1/2 bg-gradient-to-br from-blue-100/30 to-indigo-200/30 rounded-full blur-3xl"></div>
+				<div className="absolute bottom-0 -left-1/4 w-1/2 h-1/2 bg-gradient-to-tr from-purple-100/30 to-pink-200/30 rounded-full blur-3xl"></div>
+			</div>
+
+			{/* Confetti - now with z-index higher than leaderboard */}
 			{!isLoading &&
 				!isSubmitted &&
 				!isGameSubmitted &&
@@ -143,46 +150,94 @@ const GameOver = () => {
 					/>
 				)}
 
-			{/* Main Content */}
-			<div className="flex-grow flex flex-col justify-center items-center px-6 py-12">
-				<h1 className="text-5xl font-extrabold mb-4 text-center text-gray-800">
-					Game Over!
-				</h1>
-				<p className="text-lg text-gray-700 mb-2 text-center">
-					Thank you for playing!
-				</p>
-				<p className="text-2xl font-bold text-n-6 mb-8 text-center">
-					Final Score: {roundedScore} / 500
-				</p>
+			{/* Main Content - ensure z-index is below confetti */}
+			<div className="flex-grow flex flex-col justify-center items-center px-6 py-12 relative z-10">
+				<motion.div
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6 }}
+					className="text-center mb-6"
+				>
+					<h1 className="text-5xl sm:text-6xl font-extrabold mb-3 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 pb-2">
+						Game Over
+					</h1>
+					<p className="text-lg text-gray-600">Thank you for playing!</p>
+				</motion.div>
 
-				{/* Buttons */}
-				<div className="flex space-x-4">
-					<button
-						onClick={() => navigate("/")}
-						className="px-8 py-3 bg-blue-500 text-white rounded-lg shadow-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
-					>
-						Home
-					</button>
+				{/* Score Card with Buttons */}
+				<motion.div
+					initial={{ opacity: 0, scale: 0.9 }}
+					animate={{ opacity: 1, scale: 1 }}
+					transition={{ delay: 0.2, duration: 0.5 }}
+					className="bg-white rounded-2xl shadow-lg mb-10 overflow-hidden w-full max-w-md border border-gray-100"
+				>
+					{/* Card Header */}
+					<div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 text-white">
+						<h2 className="text-xl font-semibold text-center">Final Results</h2>
+					</div>
 
-					{/* Hide Play Again button for Daily Play */}
-					{!isDaily && (
-						<button
-							onClick={() => navigate("/quick-play")}
-							className="px-8 py-3 bg-green-500 text-white rounded-lg shadow-md font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all"
-						>
-							Play Again
-						</button>
-					)}
-				</div>
+					{/* Card Content */}
+					<div className="p-6">
+						<div className="flex justify-center items-center mb-6">
+							<div className="text-center">
+								<p className="text-sm text-gray-500 uppercase font-semibold tracking-wider">
+									Your Score
+								</p>
+								<div className="flex items-baseline justify-center">
+									<span className="text-4xl font-bold text-blue-600">
+										{roundedScore}
+									</span>
+									<span className="text-lg text-gray-400 ml-1">/ 500</span>
+								</div>
+							</div>
+						</div>
 
-				{/* Leaderboard */}
-				<div className="p-6 w-full max-w-3xl">
+						<div className="mb-6">
+							<div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+								<div
+									className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-600"
+									style={{ width: `${Math.min((score / 500) * 100, 100)}%` }}
+								></div>
+							</div>
+						</div>
+
+						{/* Buttons with left-right alignment */}
+						<div className="flex justify-between">
+							<button
+								onClick={() => navigate("/")}
+								className="px-8 py-3 ml-2 bg-blue-500 text-white rounded-lg shadow-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+							>
+								Home
+							</button>
+
+							{/* Hide Play Again button for Daily Play */}
+							{!isDaily && (
+								<button
+									onClick={() => navigate("/quick-play")}
+									className="px-8 py-3 mr-2 bg-green-500 text-white rounded-lg shadow-md font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all"
+								>
+									Play Again
+								</button>
+							)}
+						</div>
+					</div>
+				</motion.div>
+
+				{/* Leaderboard - Simplified */}
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.6, duration: 0.5 }}
+					className="w-full max-w-3xl"
+				>
 					<Leaderboard isDaily={isDaily} />
-				</div>
+				</motion.div>
 			</div>
 
 			{/* Footer */}
-			<Footer />
+			<div className="relative z-10">
+				<Footer />
+			</div>
 		</div>
 	);
 };
