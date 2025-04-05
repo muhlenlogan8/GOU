@@ -22,6 +22,20 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 		};
 	}, []);
 
+	// Function to fetch total players count
+	const fetchTotalPlayers = async (tableName) => {
+		try {
+			const { count, error } = await supabase
+				.from(tableName)
+				.select("*", { count: "exact", head: true });
+
+			if (error) throw error;
+			setTotalPlayers(count);
+		} catch (err) {
+			console.error("Error fetching player count:", err.message);
+		}
+	};
+
 	useEffect(() => {
 		let leaderboardChannel;
 		const fetchAndSubscribe = async () => {
@@ -39,13 +53,8 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 				if (error) throw error;
 				setLeaderboard(leaderboardData);
 
-				// Fetch total players count
-				const { count, error: countError } = await supabase
-					.from(tableName)
-					.select("*", { count: "exact", head: true });
-
-				if (countError) throw countError;
-				setTotalPlayers(count);
+				// Fetch initial total players count
+				await fetchTotalPlayers(tableName);
 
 				// Realtime subscription
 				leaderboardChannel = supabase
@@ -53,12 +62,16 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 					.on(
 						"postgres_changes",
 						{ event: "*", schema: "public", table: tableName },
-						(payload) => {
+						async (payload) => {
 							console.log("Payload received:", payload);
+
+							// Update leaderboard entries
 							setLeaderboard((prevLeaderboard) => {
 								let updatedLeaderboard = [...prevLeaderboard];
 								if (payload.eventType === "INSERT" && payload.new) {
 									updatedLeaderboard = [...updatedLeaderboard, payload.new];
+									// Update the total count when a new entry is added
+									fetchTotalPlayers(tableName);
 								} else if (payload.eventType === "UPDATE" && payload.new) {
 									updatedLeaderboard = updatedLeaderboard.map((entry) =>
 										entry.id === payload.new.id ? payload.new : entry
@@ -67,6 +80,8 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 									updatedLeaderboard = updatedLeaderboard.filter(
 										(entry) => entry.id !== payload.old.id
 									);
+									// Update the total count when an entry is deleted
+									fetchTotalPlayers(tableName);
 								}
 								// Sort and limit to top 10
 								updatedLeaderboard.sort((a, b) => b.score - a.score);
