@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import backgroundImage from "../assets/University_Of_Cincinnati.jpg";
+import foregroundImage from "../assets/Hero-Foreground.png";
+import cloudsImage from "../assets/Hero-Clouds.png";
 
 const Hero = ({ handlePlayClick }) => {
 	return (

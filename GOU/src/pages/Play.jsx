@@ -8,6 +8,7 @@ import supabase from "../../supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorComponent from "../components/ErrorComponent";
 import Footer from "../components/Footer";
+import FeedbackPopup from "../components/FeedbackPopup";
 
 const Play = () => {
 	const [showPopup, setShowPopup] = useState(false);
@@ -17,6 +18,7 @@ const Play = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [gameId, setGameId] = useState(uuidv4()); // Generate a unique game ID
+	const [showFeedback, setShowFeedback] = useState(false);
 	const navigate = useNavigate();
 
 	// useRef to access the ImageContainer and Map components directly (For updating score and resetting map)
@@ -37,7 +39,7 @@ const Play = () => {
 	// Fetch images data from the backend
 	useEffect(() => {
 		fetch(`${BACKEND_URL}/api/data`)
-		// fetch("api/data")
+			// fetch("api/data")
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
@@ -55,16 +57,49 @@ const Play = () => {
 			});
 	}, []); // , [] means this effect will run only once after the initial render
 
+	// Handle feedback popup visibility
+	const openFeedbackPopup = () => {
+		setShowFeedback(true);
+	};
+
+	const closeFeedbackPopup = () => {
+		setShowFeedback(false);
+	};
+
 	// Check for loading, error, or no data and return appropriate messages if so
 	if (loading) {
 		return <LoadingSpinner text="Preparing your game..." />;
 	} else if (error) {
-		return <ErrorComponent text={error.message} />;
+		return (
+			<>
+				<ErrorComponent
+					title="Game Error"
+					message="We couldn't load the game. Please try again later."
+					errorDetails={error.message}
+					onReport={openFeedbackPopup}
+				/>
+				<FeedbackPopup
+					isVisible={showFeedback}
+					onClose={closeFeedbackPopup}
+					initialMessage={`I encountered an error in Play mode: ${error.message}`}
+				/>
+			</>
+		);
 	} else if (imagesData.length === 0) {
 		return (
-			<div className="flex flex-col items-center justify-center h-screen w-screen bg-n-2">
-				<p className="mt-4 text-xl text-gray-700">No Image Data Avaliable</p>
-			</div>
+			<>
+				<ErrorComponent
+					title="No Images Available"
+					message="We couldn't find any images for this game."
+					errorDetails="No image data available"
+					onReport={openFeedbackPopup}
+				/>
+				<FeedbackPopup
+					isVisible={showFeedback}
+					onClose={closeFeedbackPopup}
+					initialMessage="I encountered an error in Play mode: No image data available"
+				/>
+			</>
 		);
 	}
 
@@ -173,6 +208,12 @@ const Play = () => {
 				</div>
 			</main>
 			<Footer />
+			{/* Feedback Popup */}
+			<FeedbackPopup
+				isVisible={showFeedback}
+				onClose={closeFeedbackPopup}
+				initialMessage="I encountered an issue with the Play mode"
+			/>
 		</div>
 	);
 };

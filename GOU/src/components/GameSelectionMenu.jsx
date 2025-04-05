@@ -25,13 +25,6 @@ const GameSelectionMenu = ({ isVisible, onClose, onSelect }) => {
 
 	const handleDailyChallengeClick = () => {
 		if (hasPlayedToday) return; // Prevent click if already played
-
-		const today = new Date().toISOString().split("T")[0];
-
-		// Save today's date to local storage
-		localStorage.setItem("dailyChallengePlayed", today);
-		setHasPlayedToday(true);
-
 		onSelect("daily-challenge");
 	};
 

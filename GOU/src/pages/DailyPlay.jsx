@@ -6,9 +6,10 @@ import Map from "../components/Map";
 import ResultsPopup from "../components/ResultsPopup";
 import supabase from "../../supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorComponent from "../components/ErrorComponent";
 import Footer from "../components/Footer";
 import AlreadyPlayedToday from "../components/AlreadyPlayedToday";
+import FeedbackPopup from "../components/FeedbackPopup";
+import ErrorComponent from "../components/ErrorComponent";
 
 const DailyPlay = () => {
 	const [showPopup, setShowPopup] = useState(false);
@@ -18,7 +19,11 @@ const DailyPlay = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [hasPlayedToday, setHasPlayedToday] = useState(false);
+	const [showFeedback, setShowFeedback] = useState(false);
 	const navigate = useNavigate();
+
+	// Generate a unique game ID when the component first mounts
+	const gameId = useRef(uuidv4()).current;
 
 	// useRef to access the ImageContainer and Map components directly (For updating score and resetting map)
 	const imageContainerRef = useRef(null);
@@ -27,7 +32,7 @@ const DailyPlay = () => {
 	const totalRounds = 5;
 	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // From Vercel environment variables
 
-	// Redirect to Home.jsx if the page is refreshed
+	// Redirect to home page if the play page is refreshed
 	useEffect(() => {
 		const [navEntry] = performance.getEntriesByType("navigation");
 		if (navEntry && navEntry.type === "reload") {
@@ -45,29 +50,74 @@ const DailyPlay = () => {
 			setLoading(false);
 		} else {
 			// Only fetch data if the user hasn't completed today's challenge
+			setHasPlayedToday(false);
 			fetchDailyData();
 		}
 	}, []);
 
+	// Set up a listener to mark the game as played if the user leaves or refreshes
+	useEffect(() => {
+		const handleBeforeUnload = () => {
+			// Only mark as played if the user has started the game (round > 1 or data is loaded)
+			if ((!loading && !hasPlayedToday && imagesData.length > 0) || round > 1) {
+				const today = new Date().toISOString().split("T")[0];
+				localStorage.setItem("dailyChallengePlayed", today);
+			}
+		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
+
+		return () => {
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+			// Also mark as played when component unmounts if the game was started
+			if ((!loading && !hasPlayedToday && imagesData.length > 0) || round > 1) {
+				const today = new Date().toISOString().split("T")[0];
+				localStorage.setItem("dailyChallengePlayed", today);
+			}
+		};
+	}, [loading, hasPlayedToday, imagesData.length, round]);
+
 	// Fetch images data from the backend
 	const fetchDailyData = () => {
 		fetch(`${BACKEND_URL}/api/daily-data`)
-		// fetch("api/daily-data")
 			.then((response) => {
+				// Check for text/html content-type which indicates an error page
+				const contentType = response.headers.get("content-type");
+				if (contentType && contentType.includes("text/html")) {
+					throw new Error(
+						"Received HTML response instead of JSON. The API endpoint might be down."
+					);
+				}
+
 				if (!response.ok) {
-					throw new Error("Network response was not ok");
+					throw new Error(
+						`Network response was not ok: ${response.status} ${response.statusText}`
+					);
 				}
 				return response.json();
 			})
 			.then((data) => {
+				if (!data || !Array.isArray(data) || data.length === 0) {
+					throw new Error("No valid data received from API");
+				}
 				setImagesData(data);
 				setLoading(false);
 				setRound(1); // Reset round to 1 after fetching new data
 			})
 			.catch((error) => {
+				console.error("API fetch error:", error);
 				setError(error);
 				setLoading(false);
 			});
+	};
+
+	// Handle feedback popup visibility
+	const openFeedbackPopup = () => {
+		setShowFeedback(true);
+	};
+
+	const closeFeedbackPopup = () => {
+		setShowFeedback(false);
 	};
 
 	// Check for loading, error, already played, or no data and return appropriate messages if so
@@ -76,12 +126,43 @@ const DailyPlay = () => {
 	} else if (hasPlayedToday) {
 		return <AlreadyPlayedToday />;
 	} else if (error) {
-		return <ErrorComponent text={error.message} />;
+		return (
+			<>
+				<ErrorComponent
+					title="Oops! Something went wrong"
+					message="We couldn't load today's challenge. Please try again later."
+					errorDetails={error?.message || "Unknown error"}
+					onReport={openFeedbackPopup}
+				/>
+				<FeedbackPopup
+					isVisible={showFeedback}
+					onClose={closeFeedbackPopup}
+					initialMessage={`I encountered an error in Daily Challenge: ${
+						error?.message || "Unknown error"
+					}`}
+				/>
+			</>
+		);
 	} else if (imagesData.length === 0) {
 		return (
-			<div className="flex flex-col items-center justify-center h-screen w-screen bg-n-2">
-				<p className="mt-4 text-xl text-gray-700">No Image Data Available</p>
-			</div>
+			<>
+				<ErrorComponent
+					title="Oops! Something went wrong"
+					message="We couldn't load today's challenge. Please try again later."
+					errorDetails="No image data available"
+					onReport={openFeedbackPopup}
+					onRetry={() => {
+						localStorage.removeItem("dailyChallengePlayed");
+						window.location.reload();
+					}}
+					showRetryButton={true}
+				/>
+				<FeedbackPopup
+					isVisible={showFeedback}
+					onClose={closeFeedbackPopup}
+					initialMessage="I encountered an error in Daily Challenge: No image data available"
+				/>
+			</>
 		);
 	}
 
@@ -149,7 +230,7 @@ const DailyPlay = () => {
 
 			// Mark that the user has COMPLETED today's challenge (not just played)
 			const today = new Date().toISOString().split("T")[0];
-			localStorage.setItem("dailyChallengeCompleted", today);
+			localStorage.setItem("dailyChallengePlayed", today); // Set the value here
 
 			navigate("/game-over", {
 				state: { isDaily: true, score: finalScore, gameId },
@@ -196,6 +277,12 @@ const DailyPlay = () => {
 				</div>
 			</main>
 			<Footer />
+			{/* Feedback Popup */}
+			<FeedbackPopup
+				isVisible={showFeedback}
+				onClose={closeFeedbackPopup}
+				initialMessage="I encountered an issue with the Daily Challenge"
+			/>
 		</div>
 	);
 };

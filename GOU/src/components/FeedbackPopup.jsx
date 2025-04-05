@@ -1,12 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import supabase from "../../supabase"; // Ensure this path is correct
 
-const FeedbackPopup = ({ isVisible, onClose }) => {
+const FeedbackPopup = ({ isVisible, onClose, initialMessage = "" }) => {
 	const [description, setDescription] = useState("");
 	const [error, setError] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [success, setSuccess] = useState(false);
+
+	// Set description to initialMessage when the component mounts or initialMessage changes
+	useEffect(() => {
+		if (initialMessage && isVisible) {
+			setDescription(initialMessage);
+		}
+	}, [initialMessage, isVisible]);
+
+	// Reset state when popup is closed
+	useEffect(() => {
+		if (!isVisible) {
+			setError("");
+			setSuccess(false);
+			// Don't reset description here to preserve content between visibility toggles
+		}
+	}, [isVisible]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -32,7 +48,7 @@ const FeedbackPopup = ({ isVisible, onClose }) => {
 			setTimeout(() => {
 				onClose();
 				setSuccess(false);
-				setDescription("");
+				setDescription(""); // Reset description after successful submission
 			}, 2000);
 		} catch (err) {
 			setError("Failed to submit feedback. Please try again.");
