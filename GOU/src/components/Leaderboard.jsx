@@ -7,6 +7,7 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isDailyMode, setIsDailyMode] = useState(isDaily);
 	const [isMobile, setIsMobile] = useState(false);
+	const [totalPlayers, setTotalPlayers] = useState(0);
 
 	useEffect(() => {
 		const checkIfMobile = () => {
@@ -37,6 +38,14 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 
 				if (error) throw error;
 				setLeaderboard(leaderboardData);
+
+				// Fetch total players count
+				const { count, error: countError } = await supabase
+					.from(tableName)
+					.select("*", { count: "exact", head: true });
+
+				if (countError) throw countError;
+				setTotalPlayers(count);
 
 				// Realtime subscription
 				leaderboardChannel = supabase
@@ -275,7 +284,7 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 							Resets {isDailyMode ? "Daily" : "Weekly"}
 						</div>
 						<div className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full shadow-md">
-							Players: {leaderboard.length}
+							Total Submissions: {totalPlayers}
 						</div>
 					</div>
 				</div>
