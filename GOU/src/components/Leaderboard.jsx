@@ -63,8 +63,6 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 						"postgres_changes",
 						{ event: "*", schema: "public", table: tableName },
 						async (payload) => {
-							console.log("Payload received:", payload);
-
 							// Update leaderboard entries
 							setLeaderboard((prevLeaderboard) => {
 								let updatedLeaderboard = [...prevLeaderboard];
