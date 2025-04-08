@@ -12,16 +12,25 @@ const GameSelectionMenu = ({ isVisible, onClose, onSelect }) => {
 	const isMobile = isMobileDevice();
 
 	useEffect(() => {
-		const lastPlayedDate = localStorage.getItem("dailyChallengePlayed");
+		if (isVisible) {
+			const lastPlayedDate = localStorage.getItem("dailyChallengePlayed");
 
-		// Get today's date
-		const today = new Date().toISOString().split("T")[0];
+			// Get today's date in EST
+			const today = new Date().toLocaleString("en-US", {
+				timeZone: "America/New_York",
+				year: "numeric",
+				month: "2-digit",
+				day: "2-digit",
+			}).split(",")[0]; // Extract the date portion
 
-		// Check if the last played date is today
-		if (lastPlayedDate === today) {
-			setHasPlayedToday(true);
+			// Check if the last played date is today
+			if (lastPlayedDate === today) {
+				setHasPlayedToday(true);
+			} else {
+				setHasPlayedToday(false);
+			}
 		}
-	}, []);
+	}, [isVisible]);
 
 	const handleDailyChallengeClick = () => {
 		if (hasPlayedToday) return; // Prevent click if already played

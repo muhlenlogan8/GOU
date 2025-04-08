@@ -43,7 +43,16 @@ const DailyPlay = () => {
 	// Check if the user has already played today's challenge
 	useEffect(() => {
 		const lastPlayedDate = localStorage.getItem("dailyChallengePlayed");
-		const today = new Date().toISOString().split("T")[0];
+
+		// Get today's date in EST
+		const today = new Date()
+			.toLocaleString("en-US", {
+				timeZone: "America/New_York",
+				year: "numeric",
+				month: "2-digit",
+				day: "2-digit",
+			})
+			.split(",")[0]; // Extract the date portion
 
 		if (lastPlayedDate === today) {
 			setHasPlayedToday(true);
@@ -60,7 +69,16 @@ const DailyPlay = () => {
 		const handleBeforeUnload = () => {
 			// Only mark as played if the user has started the game (round > 1 or data is loaded)
 			if ((!loading && !hasPlayedToday && imagesData.length > 0) || round > 1) {
-				const today = new Date().toISOString().split("T")[0];
+				// Get today's date in EST
+				const today = new Date()
+					.toLocaleString("en-US", {
+						timeZone: "America/New_York",
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+					})
+					.split(",")[0]; // Extract the date portion
+
 				localStorage.setItem("dailyChallengePlayed", today);
 			}
 		};
@@ -71,7 +89,16 @@ const DailyPlay = () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			// Also mark as played when component unmounts if the game was started
 			if ((!loading && !hasPlayedToday && imagesData.length > 0) || round > 1) {
-				const today = new Date().toISOString().split("T")[0];
+				// Get today's date in EST
+				const today = new Date()
+					.toLocaleString("en-US", {
+						timeZone: "America/New_York",
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+					})
+					.split(",")[0]; // Extract the date portion
+
 				localStorage.setItem("dailyChallengePlayed", today);
 			}
 		};
@@ -229,7 +256,15 @@ const DailyPlay = () => {
 			const finalScore = imageContainerRef.current.getScore();
 
 			// Mark that the user has COMPLETED today's challenge (not just played)
-			const today = new Date().toISOString().split("T")[0];
+			const today = new Date()
+				.toLocaleString("en-US", {
+					timeZone: "America/New_York",
+					year: "numeric",
+					month: "2-digit",
+					day: "2-digit",
+				})
+				.split(",")[0]; // Extract the date portion
+
 			localStorage.setItem("dailyChallengePlayed", today); // Set the value here
 
 			navigate("/game-over", {
