@@ -264,7 +264,7 @@ const Leaderboard = ({ isDaily = false, showToggle = false }) => {
 													index === 0
 														? "text-yellow-900"
 														: index === 1
-														? "text-gray-800"
+														? "text-gray-600"
 														: index === 2
 														? "text-amber-900"
 														: "text-gray-600"

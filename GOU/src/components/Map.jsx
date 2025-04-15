@@ -13,7 +13,7 @@ import {
 	Polygon,
 	useMapEvents,
 	Tooltip,
-	Circle
+	Circle,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -36,7 +36,8 @@ const guessIcon = new L.Icon({
 });
 
 const actualIcon = new L.Icon({
-	iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+	iconUrl:
+		"https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
 	iconSize: [25, 41],
 	iconAnchor: [12, 41],
 	popupAnchor: [1, -34],
@@ -187,10 +188,13 @@ const Map = forwardRef(
 
 		return (
 			<div className="w-full h-full flex flex-col">
-				<div className="flex-1 relative w-full" style={{ 
-					minHeight: windowWidth < 768 ? "200px" : "300px",
-					height: windowWidth < 768 ? "33vh" : "100%" 
-				}}>
+				<div
+					className="flex-1 relative w-full"
+					style={{
+						minHeight: windowWidth < 768 ? "200px" : "300px",
+						height: windowWidth < 768 ? "33vh" : "100%",
+					}}
+				>
 					<MapContainer
 						center={mapCenter}
 						zoom={windowWidth < 768 ? 15 : 16}
@@ -201,9 +205,10 @@ const Map = forwardRef(
 						]}
 						ref={mapRef}
 						className="w-full h-full"
-						style={{ 
-							height: "100%", 
-							minHeight: windowWidth < 768 ? "200px" : "300px" 
+						style={{
+							height: "100%",
+							minHeight: windowWidth < 768 ? "200px" : "300px",
+							zIndex: 1, // Ensure the map has a lower z-index
 						}}
 						scrollWheelZoom={true}
 					>
@@ -217,8 +222,7 @@ const Map = forwardRef(
 						{/* Add Marker and line if user submits coordinates for the round */}
 						{showActualPoint && coordinates && currentPoint && (
 							<>
-								<Marker position={currentPoint} icon={actualIcon}>
-								</Marker>
+								<Marker position={currentPoint} icon={actualIcon}></Marker>
 								<Polyline
 									positions={[coordinates, currentPoint]}
 									color="#3B82F6"

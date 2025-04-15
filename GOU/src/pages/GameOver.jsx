@@ -201,29 +201,38 @@ const GameOver = () => {
 							</div>
 						</div>
 
-						{/* Buttons with left-right alignment */}
-						<div className="flex justify-between">
-							<button
-								onClick={() => navigate("/")}
-								className="px-8 py-3 ml-2 bg-blue-500 text-white rounded-lg shadow-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
-							>
-								Home
-							</button>
-
-							{/* Hide Play Again button for Daily Play */}
-							{!isDaily && (
+						{/* Buttons section with conditional styling based on game type */}
+						{isDaily ? (
+							// Centered Home button for Daily Play
+							<div className="flex justify-center">
+								<button
+									onClick={() => navigate("/")}
+									className="px-8 py-3 bg-blue-500 text-white rounded-lg shadow-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+								>
+									Home
+								</button>
+							</div>
+						) : (
+							// Left-right aligned buttons for Regular Play
+							<div className="flex justify-between">
+								<button
+									onClick={() => navigate("/")}
+									className="px-8 py-3 ml-2 bg-blue-500 text-white rounded-lg shadow-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+								>
+									Home
+								</button>
 								<button
 									onClick={() => navigate("/quick-play")}
 									className="px-8 py-3 mr-2 bg-green-500 text-white rounded-lg shadow-md font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all"
 								>
 									Play Again
 								</button>
-							)}
-						</div>
+							</div>
+						)}
 					</div>
 				</motion.div>
 
-				{/* Leaderboard - Simplified */}
+				{/* Leaderboard */}
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}

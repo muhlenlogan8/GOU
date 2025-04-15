@@ -107,6 +107,7 @@ const DailyPlay = () => {
 	// Fetch images data from the backend
 	const fetchDailyData = () => {
 		fetch(`${BACKEND_URL}/api/daily-data`)
+		// fetch("api/daily-data")
 			.then((response) => {
 				// Check for text/html content-type which indicates an error page
 				const contentType = response.headers.get("content-type");
@@ -231,19 +232,6 @@ const DailyPlay = () => {
 		}
 	};
 
-	// Submit reported image to supabase database
-	const handleImageReport = async () => {
-		const { data, error } = await supabase.from("reported").insert([
-			{
-				image: imagesData[round - 1].image_name,
-				gameId,
-			},
-		]);
-		if (error) {
-			console.error("Error reporting image:", error.message);
-		}
-	};
-
 	// Close the popup and navigate to the next round or end the game
 	const handleClosePopup = () => {
 		setShowPopup(false);
@@ -297,7 +285,10 @@ const DailyPlay = () => {
 							totalRounds={totalRounds}
 							onClose={handleClosePopup}
 							isGameOver={round === totalRounds}
-							onReport={handleImageReport} // Pass the handleImageReport function to the ResultsPopup component
+							gameId={gameId}
+							imageName={
+								imagesData[round - 1]?.image_name || `Image for round ${round}`
+							}
 						/>
 					)}
 				</div>

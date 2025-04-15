@@ -39,7 +39,7 @@ const Play = () => {
 	// Fetch images data from the backend
 	useEffect(() => {
 		fetch(`${BACKEND_URL}/api/data`)
-			// fetch("api/data")
+		// fetch("api/data")
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
@@ -141,19 +141,6 @@ const Play = () => {
 		}
 	};
 
-	// Submit reported image to supabase database
-	const handleImageReport = async () => {
-		const { data, error } = await supabase.from("reported").insert([
-			{
-				image: imagesData[round - 1].image_name,
-				gameId,
-			},
-		]);
-		if (error) {
-			console.error("Error reporting image:", error.message);
-		}
-	};
-
 	// Close the popup and navigate to the next round or end the game
 	const handleClosePopup = () => {
 		setShowPopup(false);
@@ -193,7 +180,10 @@ const Play = () => {
 							totalRounds={totalRounds}
 							onClose={handleClosePopup}
 							isGameOver={round === totalRounds}
-							onReport={handleImageReport} // Pass the handleImageReport function to the ResultsPopup component
+							gameId={gameId}
+							imageName={
+								imagesData[round - 1]?.image_name || `Image for round ${round}`
+							}
 						/>
 					)}
 				</div>
@@ -208,7 +198,7 @@ const Play = () => {
 				</div>
 			</main>
 			<Footer />
-			{/* Feedback Popup */}
+			{/* Render FeedbackPopup last to ensure it is above all other elements */}
 			<FeedbackPopup
 				isVisible={showFeedback}
 				onClose={closeFeedbackPopup}
