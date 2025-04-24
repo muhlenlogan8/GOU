@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import supabase from "../../supabase"; // Ensure this path is correct
+import supabase from "../../supabase";
 
 const FeedbackPopup = ({ isVisible, onClose, initialMessage = "" }) => {
 	const [description, setDescription] = useState("");

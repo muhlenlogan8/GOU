@@ -12,25 +12,9 @@
 	height: calc(90vh - 65px);
 }
 
-/* Add the hue change filter for the red color marker */
-.huechange {
-	filter: hue-rotate(120deg);
-}
-
 * {
 	scroll-behavior: smooth;
 	/* Smooth scrolling when navigating within the page (anchor links) */
-}
-
-/* Text effects */
-.poppins-text {
-	font-family: "Poppins", monospace;
-	text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.5);
-}
-
-.roboto-text {
-	font-family: "Roboto Mono", monospace;
-	text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.5);
 }
 
 /* Gradient background animation for the menu */
@@ -84,17 +68,16 @@
 /* Loading Spinner CSS */
 @keyframes spin {
 	0% {
-	  transform: rotate(0deg);
+		transform: rotate(0deg);
 	}
 	100% {
-	  transform: rotate(360deg);
+		transform: rotate(360deg);
 	}
-  }
-  
-  .spinner-border {
+}
+
+.spinner-border {
 	display: inline-block;
 	border-color: #cbd5e1;
 	border-top-color: #3b82f6;
 	animation: spin 1s linear infinite;
-  }
-  
+}

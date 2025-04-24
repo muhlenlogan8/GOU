@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import supabase from "../../../supabase";
 
@@ -11,8 +11,16 @@ const ReportImagePopup = ({
 	const [selectedOption, setSelectedOption] = useState("");
 	const [customDescription, setCustomDescription] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState(false);
+
+	// Reset the submission state when the popup visibility changes
+	useEffect(() => {
+		if (isVisible) {
+			setIsSubmitted(false);
+		}
+	}, [isVisible]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -22,6 +30,9 @@ const ReportImagePopup = ({
 			setError("Please select an option or provide a description.");
 			return;
 		}
+
+		// Prevent multiple submissions
+		if (isSubmitted) return;
 
 		setIsSubmitting(true);
 		setError("");
@@ -39,6 +50,8 @@ const ReportImagePopup = ({
 			if (error) throw error;
 
 			setSuccess(true);
+			setIsSubmitted(true); // Mark as submitted to prevent multiple submissions
+
 			setTimeout(() => {
 				onClose(true); // Pass true to indicate a report was successfully submitted
 				setSuccess(false);
@@ -71,7 +84,7 @@ const ReportImagePopup = ({
 				{/* Header with gradient background */}
 				<div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
 
-                {/* Centered close button at the top */}
+				{/* Centered close button at the top */}
 				<div className="flex justify-center mb-2">
 					<button
 						className="w-14 h-9 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-800 transition-colors"
@@ -194,17 +207,23 @@ const ReportImagePopup = ({
 					<button
 						type="submit"
 						className={`py-3 px-4 rounded-lg font-medium text-white shadow-sm transition-all ${
-							isSubmitting
+							isSubmitting || isSubmitted
 								? "bg-gray-400 cursor-not-allowed"
 								: selectedOption || customDescription.trim()
 								? "bg-blue-600 hover:bg-blue-700"
 								: "bg-gray-400 cursor-not-allowed"
 						}`}
 						disabled={
-							isSubmitting || (!selectedOption && !customDescription.trim())
+							isSubmitting ||
+							isSubmitted ||
+							(!selectedOption && !customDescription.trim())
 						}
 					>
-						{isSubmitting ? "Submitting..." : "Submit Report"}
+						{isSubmitting
+							? "Submitting..."
+							: isSubmitted
+							? "Report Submitted"
+							: "Submit Report"}
 					</button>
 				</form>
 			</motion.div>

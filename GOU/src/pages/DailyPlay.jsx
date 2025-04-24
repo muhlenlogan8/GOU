@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 import ImageContainer from "../components/ImageContainer";
 import Map from "../components/Map";
 import ResultsPopup from "../components/ResultsPopup";
-import supabase from "../../supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Footer from "../components/Footer";
 import AlreadyPlayedToday from "../components/AlreadyPlayedToday";
